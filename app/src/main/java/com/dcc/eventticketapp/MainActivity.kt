@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.dcc.eventticketapp.ui.screens.auth.LoginScreen
+import com.dcc.eventticketapp.ui.screens.auth.RegisterScreen
 import com.dcc.eventticketapp.ui.theme.EventTicketAppTheme
 
 class MainActivity : ComponentActivity() {
@@ -20,7 +21,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             EventTicketAppTheme {
-                    LoginScreen()
+                //LoginScreen()
+                RegisterScreen()
             }
         }
     }
@@ -31,6 +33,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun GreetingPreview() {
     EventTicketAppTheme {
-        LoginScreen()
+        //LoginScreen()
+        RegisterScreen()
     }
 }
