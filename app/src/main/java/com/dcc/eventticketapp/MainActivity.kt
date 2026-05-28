@@ -4,16 +4,11 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.dcc.eventticketapp.ui.screens.auth.LoginScreen
-import com.dcc.eventticketapp.ui.screens.auth.RegisterScreen
+import com.dcc.eventticketapp.ui.auth.screens.LoginScreen
 import com.dcc.eventticketapp.ui.theme.EventTicketAppTheme
+import com.dcc.mobile.ui.navigation.AppNavigation
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,19 +16,17 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             EventTicketAppTheme {
-                //LoginScreen()
-                RegisterScreen()
+                AppNavigation()
             }
         }
     }
 }
 
-
-@Preview(showBackground = true)
+@Preview(showBackground = true, device = "spec:width=411dp,height=891dp")
 @Composable
 fun GreetingPreview() {
     EventTicketAppTheme {
-        //LoginScreen()
-        RegisterScreen()
+        LoginScreen()
+        //RegisterScreen()
     }
 }
