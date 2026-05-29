@@ -32,6 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -91,8 +92,8 @@ fun LoginScreen(
 
                 /* ------------ Header --------- */
                 AuthHeader(
-                    title    = "Connexion",
-                    subtitle = "Connectez-vous pour continuer"
+                    title    = stringResource(R.string.login_title),
+                    subtitle = stringResource(R.string.login_subtitle)
                 )
 
                 Spacer(modifier = Modifier.height(30.dp))
@@ -101,7 +102,7 @@ fun LoginScreen(
                 AuthTextField(
                     value         = email,
                     onValueChange = { email = it },
-                    label         = "Adresse email",
+                    label = stringResource(R.string.login_email),
                     leadingIcon   = Icons.Default.Email,
                     keyboardType  = KeyboardType.Email
                 )
@@ -110,7 +111,7 @@ fun LoginScreen(
                 AuthTextField(
                     value              = password,
                     onValueChange      = { password = it },
-                    label              = "Mot de passe",
+                    label = stringResource(R.string.login_password),
                     leadingIcon        = Icons.Default.Lock,
                     isPassword         = true,
                     passwordVisible    = passwordVisible,
@@ -123,7 +124,7 @@ fun LoginScreen(
                     horizontalArrangement = Arrangement.End
                 ) {
                     Text(
-                        text       = "Mot de passe oublié ?",
+                        text = stringResource(R.string.login_forgot_password),
                         color      = OrangeMain,
                         fontSize   = 13.sp,
                         fontWeight = FontWeight.Medium,
@@ -135,7 +136,7 @@ fun LoginScreen(
 
                 /* ------------ Bouton Connexion --------- */
                 AuthButton(
-                    text      = "Se connecter",
+                    text = stringResource(R.string.login_button),
                     onClick   = { isLoading = true; onLoginClick() },
                     enabled   = email.isNotBlank() && password.isNotBlank(),
                     isLoading = isLoading
@@ -150,7 +151,7 @@ fun LoginScreen(
                 ) {
                     HorizontalDivider(modifier = Modifier.weight(1f), color = DividerColor)
                     Text(
-                        text     = "Ou continuer avec",
+                        text = stringResource(R.string.login_or),
                         modifier = Modifier.padding(horizontal = 14.dp),
                         style    = MaterialTheme.typography.bodySmall,
                         color    = TextGrayMode
@@ -170,7 +171,7 @@ fun LoginScreen(
                 Spacer(modifier = Modifier.height(12.dp))
 
                 SsoButton(
-                    text    = "Continuer avec Facebook",
+                    text = stringResource(R.string.login_facebook),
                     icon    = painterResource(id = R.drawable.logo_facebook),
                     onClick = onFacebookSignInClick
                 )
@@ -179,8 +180,8 @@ fun LoginScreen(
 
                 /* ------------ Lien S'inscrire --------- */
                 AuthFooterLink(
-                    question      = "Pas encore de compte ? ",
-                    actionText    = "S'inscrire",
+                    question      = stringResource(R.string.login_no_account),
+                    actionText    = stringResource(R.string.login_register_link),
                     onActionClick = onNavigateToRegister
                 )
             }

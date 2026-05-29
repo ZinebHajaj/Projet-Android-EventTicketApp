@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +42,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.dcc.eventticketapp.R
 import com.dcc.eventticketapp.ui.theme.EventTicketAppTheme
 import com.dcc.eventticketapp.ui.theme.OrangeLight
 import com.dcc.eventticketapp.ui.theme.OrangeMain
@@ -114,8 +116,9 @@ fun RegisterScreen(
 
                 /* ------------ Header --------- */
                 AuthHeader(
-                    title    = "Inscription",
-                    subtitle = "Créez votre compte pour continuer"
+                    title    = stringResource(R.string.register_title),
+                    subtitle = stringResource(R.string.register_subtitle)
+
                 )
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -124,7 +127,7 @@ fun RegisterScreen(
                 AuthTextField(
                     value         = fullName,
                     onValueChange = { fullName = it },
-                    label         = "Nom complet",
+                    label = stringResource(R.string.register_name),
                     leadingIcon   = Icons.Default.Person,
                     keyboardType  = KeyboardType.Text
                 )
@@ -137,11 +140,10 @@ fun RegisterScreen(
                         emailError = it.isNotEmpty() &&
                                 !Patterns.EMAIL_ADDRESS.matcher(it).matches()
                     },
-                    label        = "Adresse email",
-                    leadingIcon  = Icons.Default.Email,
+                    label = stringResource(R.string.register_email),                    leadingIcon  = Icons.Default.Email,
                     keyboardType = KeyboardType.Email,
                     isError      = emailError,
-                    errorMessage = "Adresse email invalide"
+                    errorMessage = stringResource(R.string.error_invalid_email)
                 )
 
                 /* ------------ Téléphone --------- */
@@ -151,11 +153,11 @@ fun RegisterScreen(
                         phone = it
                         phoneError = it.isNotEmpty() && it.length < 10
                     },
-                    label        = "Téléphone",
+                    label = stringResource(R.string.register_phone),
                     leadingIcon  = Icons.Default.Phone,
                     keyboardType = KeyboardType.Phone,
                     isError      = phoneError,
-                    errorMessage = "Numéro invalide (min. 10 chiffres)"
+                    errorMessage = stringResource(R.string.error_invalid_phone)
                 )
 
                 /* ------------ Mot de passe --------- */
@@ -165,7 +167,7 @@ fun RegisterScreen(
                         password = it
                         passwordMatchError = confirmPassword.isNotEmpty() && it != confirmPassword
                     },
-                    label              = "Mot de passe",
+                    label = stringResource(R.string.register_password),
                     leadingIcon        = Icons.Default.Lock,
                     isPassword         = true,
                     passwordVisible    = passwordVisible,
@@ -179,14 +181,14 @@ fun RegisterScreen(
                         confirmPassword = it
                         passwordMatchError = it.isNotEmpty() && it != password
                     },
-                    label              = "Confirmer mot de passe",
+                    label = stringResource(R.string.register_confirm_password),
                     labelFontSize      = 14.sp,
                     leadingIcon        = Icons.Default.Lock,
                     isPassword         = true,
                     passwordVisible    = confirmPasswordVisible,
                     onToggleVisibility = { confirmPasswordVisible = !confirmPasswordVisible },
                     isError            = passwordMatchError,
-                    errorMessage       = "Les mots de passe ne correspondent pas"
+                    errorMessage = stringResource(R.string.error_password_mismatch)
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -207,13 +209,13 @@ fun RegisterScreen(
                     Spacer(modifier = Modifier.width(4.dp))
                     Text(
                         buildAnnotatedString {
-                            append("J'accepte les ")
+                            append(stringResource(R.string.register_terms_part1))
                             withStyle(SpanStyle(color = OrangeMain, fontWeight = FontWeight.SemiBold)) {
-                                append("Conditions d'utilisation")
+                                append(stringResource(R.string.register_terms_link1))
                             }
-                            append(" et la ")
+                            append(stringResource(R.string.register_terms_part2))
                             withStyle(SpanStyle(color = OrangeMain, fontWeight = FontWeight.SemiBold)) {
-                                append("Politique de confidentialité")
+                                append(stringResource(R.string.register_terms_link2))
                             }
                         },
                         fontSize = 13.sp,
@@ -225,7 +227,7 @@ fun RegisterScreen(
 
                 /* ------------ Bouton S'inscrire --------- */
                 AuthButton(
-                    text      = "S'inscrire",
+                    text = stringResource(R.string.register_button),
                     onClick   = { isLoading = true; onRegisterClick() },
                     enabled   = isFormValid,
                     isLoading = isLoading
@@ -235,8 +237,8 @@ fun RegisterScreen(
 
                 /* ------------ Lien Connexion --------- */
                 AuthFooterLink(
-                    question      = "Déjà un compte ? ",
-                    actionText    = "Se connecter",
+                    question   = stringResource(R.string.register_has_account),
+                    actionText = stringResource(R.string.register_login_link),
                     onActionClick = onNavigateToLogin
                 )
             }
