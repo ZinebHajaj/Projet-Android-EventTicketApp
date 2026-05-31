@@ -24,6 +24,8 @@ import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,6 +45,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dcc.eventticketapp.R
+import com.dcc.eventticketapp.ui.auth.AuthIntent
+import com.dcc.eventticketapp.ui.auth.AuthViewModel
 import com.dcc.eventticketapp.ui.theme.EventTicketAppTheme
 import com.dcc.eventticketapp.ui.theme.OrangeLight
 import com.dcc.eventticketapp.ui.theme.OrangeMain
@@ -52,39 +56,25 @@ import com.dcc.eventticketapp.ui.auth.components.AuthTextField
 import com.dcc.eventticketapp.ui.auth.components.AuthButton
 import com.dcc.eventticketapp.ui.auth.components.AuthFooterLink
 import com.dcc.eventticketapp.ui.auth.components.AuthHeader
+import com.dcc.eventticketapp.ui.theme.ErrorLight
 
 @Composable
 fun RegisterScreen(
-    onRegisterClick: () -> Unit = {},
-    onNavigateToLogin: () -> Unit = {}
+    viewModel : AuthViewModel,
+    onRegisterSuccess : () -> Unit = {},
+    onNavigateToLogin : () -> Unit = {}
 ) {
-    var fullName        by remember { mutableStateOf("") }
-    var email           by remember { mutableStateOf("") }
-    var phone           by remember { mutableStateOf("") }
-    var password        by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
+    val state by viewModel.state.collectAsState()
 
-    var passwordVisible        by remember { mutableStateOf(false) }
+    var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
-    var acceptedTerms by remember { mutableStateOf(false) }
-    var isLoading              by remember { mutableStateOf(false) }
 
-    // Erreurs
-    var emailError           by remember { mutableStateOf(false) }
-    var phoneError           by remember { mutableStateOf(false) }
-    var passwordMatchError   by remember { mutableStateOf(false) }
-
-    // Champs valides
-    val isFormValid = fullName.isNotBlank()
-            && email.isNotBlank()
-            && !emailError
-            && phone.isNotBlank()
-            && !phoneError
-            && password.isNotBlank()
-            && confirmPassword.isNotBlank()
-            && !passwordMatchError
-            && acceptedTerms
-            && !isLoading
+    LaunchedEffect(state.isSuccess) {
+        if (state.isSuccess) {
+            viewModel.handleIntent(AuthIntent.ResetState)
+            onRegisterSuccess()
+        }
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -125,8 +115,10 @@ fun RegisterScreen(
 
                 /* ------------ Nom complet --------- */
                 AuthTextField(
-                    value         = fullName,
-                    onValueChange = { fullName = it },
+                    value = state.registerName,
+                    onValueChange = {
+                        viewModel.handleIntent(AuthIntent.RegisterNameChanged(it))
+                    },
                     label = stringResource(R.string.register_name),
                     leadingIcon   = Icons.Default.Person,
                     keyboardType  = KeyboardType.Text
@@ -134,60 +126,56 @@ fun RegisterScreen(
 
                 /* ------------ Email --------- */
                 AuthTextField(
-                    value         = email,
+                    value = state.registerEmail,
                     onValueChange = {
-                        email = it
-                        emailError = it.isNotEmpty() &&
-                                !Patterns.EMAIL_ADDRESS.matcher(it).matches()
+                        viewModel.handleIntent(AuthIntent.RegisterEmailChanged(it))
                     },
-                    label = stringResource(R.string.register_email),                    leadingIcon  = Icons.Default.Email,
+                    label = stringResource(R.string.register_email),
+                    leadingIcon  = Icons.Default.Email,
                     keyboardType = KeyboardType.Email,
-                    isError      = emailError,
+                    isError      = state.emailError,
                     errorMessage = stringResource(R.string.error_invalid_email)
                 )
 
                 /* ------------ Téléphone --------- */
                 AuthTextField(
-                    value         = phone,
+                    value = state.registerPhone,
                     onValueChange = {
-                        phone = it
-                        phoneError = it.isNotEmpty() && it.length < 10
+                        viewModel.handleIntent(AuthIntent.RegisterPhoneChanged(it))
                     },
                     label = stringResource(R.string.register_phone),
                     leadingIcon  = Icons.Default.Phone,
                     keyboardType = KeyboardType.Phone,
-                    isError      = phoneError,
+                    isError = state.phoneError,
                     errorMessage = stringResource(R.string.error_invalid_phone)
                 )
 
                 /* ------------ Mot de passe --------- */
                 AuthTextField(
-                    value              = password,
-                    onValueChange      = {
-                        password = it
-                        passwordMatchError = confirmPassword.isNotEmpty() && it != confirmPassword
+                    value = state.registerPassword,
+                    onValueChange = {
+                        viewModel.handleIntent(AuthIntent.RegisterPasswordChanged(it))
                     },
                     label = stringResource(R.string.register_password),
-                    leadingIcon        = Icons.Default.Lock,
-                    isPassword         = true,
-                    passwordVisible    = passwordVisible,
+                    leadingIcon = Icons.Default.Lock,
+                    isPassword = true,
+                    passwordVisible = passwordVisible,
                     onToggleVisibility = { passwordVisible = !passwordVisible }
                 )
 
                 /* ------------ Confirmer mot de passe --------- */
                 AuthTextField(
-                    value              = confirmPassword,
-                    onValueChange      = {
-                        confirmPassword = it
-                        passwordMatchError = it.isNotEmpty() && it != password
+                    value = state.registerConfirmPassword,
+                    onValueChange = {
+                        viewModel.handleIntent(AuthIntent.RegisterConfirmPasswordChanged(it))
                     },
                     label = stringResource(R.string.register_confirm_password),
-                    labelFontSize      = 14.sp,
-                    leadingIcon        = Icons.Default.Lock,
-                    isPassword         = true,
-                    passwordVisible    = confirmPasswordVisible,
+                    labelFontSize = 14.sp,
+                    leadingIcon = Icons.Default.Lock,
+                    isPassword = true,
+                    passwordVisible = confirmPasswordVisible,
                     onToggleVisibility = { confirmPasswordVisible = !confirmPasswordVisible },
-                    isError            = passwordMatchError,
+                    isError = state.passwordMatchError,
                     errorMessage = stringResource(R.string.error_password_mismatch)
                 )
 
@@ -199,8 +187,10 @@ fun RegisterScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Checkbox(
-                        checked         = acceptedTerms,
-                        onCheckedChange = { acceptedTerms = it },
+                        checked = state.registerTermsAccepted,
+                        onCheckedChange = {
+                            viewModel.handleIntent(AuthIntent.RegisterTermsChanged(it))
+                        },
                         colors          = CheckboxDefaults.colors(
                             checkedColor   = OrangeMain,
                             uncheckedColor = TextGrayMode
@@ -223,14 +213,33 @@ fun RegisterScreen(
                     )
                 }
 
+                if (state.error != null) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text     = state.error!!,
+                        color    = ErrorLight,
+                        fontSize = 13.sp
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(16.dp))
 
                 /* ------------ Bouton S'inscrire --------- */
                 AuthButton(
                     text = stringResource(R.string.register_button),
-                    onClick   = { isLoading = true; onRegisterClick() },
-                    enabled   = isFormValid,
-                    isLoading = isLoading
+                    onClick   = {
+                        viewModel.handleIntent(AuthIntent.SubmitRegister)
+                    },
+                    enabled   = state.registerName.isNotBlank()
+                            && state.registerEmail.isNotBlank()
+                            && !state.emailError
+                            && state.registerPhone.isNotBlank()
+                            && !state.phoneError
+                            && state.registerPassword.isNotBlank()
+                            && state.registerConfirmPassword.isNotBlank()
+                            && !state.passwordMatchError
+                            && state.registerTermsAccepted,
+                    isLoading = state.isLoading
                 )
 
                 Spacer(modifier = Modifier.height(16.dp))
@@ -246,7 +255,7 @@ fun RegisterScreen(
     }
 }
 
-
+/*
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 private fun RegisterScreenPreview() {
@@ -254,3 +263,4 @@ private fun RegisterScreenPreview() {
         RegisterScreen()
     }
 }
+*/
