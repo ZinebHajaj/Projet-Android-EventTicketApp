@@ -22,6 +22,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +42,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dcc.eventticketapp.ui.theme.EventTicketAppTheme
 import com.dcc.eventticketapp.R
+import com.dcc.eventticketapp.ui.auth.AuthIntent
+import com.dcc.eventticketapp.ui.auth.AuthViewModel
 import com.dcc.eventticketapp.ui.theme.DividerColor
 import com.dcc.eventticketapp.ui.theme.OrangeLight
 import com.dcc.eventticketapp.ui.theme.OrangeMain
@@ -50,18 +54,25 @@ import com.dcc.eventticketapp.ui.auth.components.AuthButton
 import com.dcc.eventticketapp.ui.auth.components.AuthFooterLink
 import com.dcc.eventticketapp.ui.auth.components.AuthHeader
 import com.dcc.eventticketapp.ui.auth.components.SsoButton
+import com.dcc.eventticketapp.ui.theme.ErrorLight
 
 @Composable
 fun LoginScreen(
-    onLoginClick: () -> Unit = {},
-    onGoogleSignInClick: () -> Unit = {},
-    onFacebookSignInClick: () -> Unit = {},
-    onNavigateToRegister: () -> Unit = {}
+    viewModel : AuthViewModel,
+    onLoginSuccess : () -> Unit = {},
+    onGoogleSignInClick : () -> Unit = {},
+    onFacebookSignInClick : () -> Unit = {},
+    onNavigateToRegister : () -> Unit = {}
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val state by viewModel.state.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
-    var isLoading by remember { mutableStateOf(false) }
+
+    LaunchedEffect(state.isSuccess) {
+        if (state.isSuccess) {
+            viewModel.handleIntent(AuthIntent.ResetState)
+            onLoginSuccess()
+        }
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -100,8 +111,10 @@ fun LoginScreen(
 
                 /* ------------ Champ Email --------- */
                 AuthTextField(
-                    value         = email,
-                    onValueChange = { email = it },
+                    value         = state.loginEmail,
+                    onValueChange = {
+                        viewModel.handleIntent(AuthIntent.LoginEmailChanged(it))
+                    },
                     label = stringResource(R.string.login_email),
                     leadingIcon   = Icons.Default.Email,
                     keyboardType  = KeyboardType.Email
@@ -109,8 +122,10 @@ fun LoginScreen(
 
                 /* ------------ Champ Password --------- */
                 AuthTextField(
-                    value              = password,
-                    onValueChange      = { password = it },
+                    value              = state.loginPassword,
+                    onValueChange      = {
+                        viewModel.handleIntent(AuthIntent.LoginPasswordChanged(it))
+                    },
                     label = stringResource(R.string.login_password),
                     leadingIcon        = Icons.Default.Lock,
                     isPassword         = true,
@@ -132,14 +147,26 @@ fun LoginScreen(
                     )
                 }
 
+                if (state.error != null) {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text     = state.error!!,
+                        color    = ErrorLight,
+                        fontSize = 13.sp
+                    )
+                }
+
                 Spacer(modifier = Modifier.height(20.dp))
 
                 /* ------------ Bouton Connexion --------- */
                 AuthButton(
                     text = stringResource(R.string.login_button),
-                    onClick   = { isLoading = true; onLoginClick() },
-                    enabled   = email.isNotBlank() && password.isNotBlank(),
-                    isLoading = isLoading
+                    onClick   = {
+                        viewModel.handleIntent(AuthIntent.SubmitLogin)
+                    },
+                    enabled   = state.loginEmail.isNotBlank() &&
+                                state.loginPassword.isNotBlank(),
+                    isLoading = state.isLoading
                 )
 
                 Spacer(modifier = Modifier.height(24.dp))
@@ -149,14 +176,20 @@ fun LoginScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    HorizontalDivider(modifier = Modifier.weight(1f), color = DividerColor)
+                    HorizontalDivider(
+                        modifier = Modifier.weight(1f),
+                        color = DividerColor
+                    )
                     Text(
                         text = stringResource(R.string.login_or),
                         modifier = Modifier.padding(horizontal = 14.dp),
                         style    = MaterialTheme.typography.bodySmall,
                         color    = TextGrayMode
                     )
-                    HorizontalDivider(modifier = Modifier.weight(1f), color = DividerColor)
+                    HorizontalDivider(
+                        modifier = Modifier.weight(1f),
+                        color = DividerColor
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(20.dp))
@@ -190,6 +223,8 @@ fun LoginScreen(
     }
 }
 
+
+/*
 @Preview (showBackground = true, showSystemUi = true)
 @Composable
 private fun LoginScreenPreview() {
@@ -197,3 +232,4 @@ private fun LoginScreenPreview() {
         LoginScreen()
     }
 }
+ */
