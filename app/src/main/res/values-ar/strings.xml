@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">TicketGo</string>
+    <string name="app_tagline">تذاكرك، بنقرة واحدة.</string>
+    <string name="app_version">الإصدار 1.0.0</string>
+
+    <!-- Auth -->
+    <string name="login_title">تسجيل الدخول</string>
+    <string name="login_subtitle">سجل دخولك للمتابعة</string>
+    <string name="login_email">البريد الإلكتروني</string>
+    <string name="login_password">كلمة المرور</string>
+    <string name="login_forgot_password">نسيت كلمة المرور؟</string>
+    <string name="login_button">تسجيل الدخول</string>
+    <string name="login_or">أو تابع مع</string>
+    <string name="login_google">تسجيل الدخول بـ Google</string>
+    <string name="login_facebook">تابع مع Facebook</string>
+    <string name="login_no_account">ليس لديك حساب؟ </string>
+    <string name="login_register_link">إنشاء حساب</string>
+
+    <string name="register_title">إنشاء حساب</string>
+    <string name="register_subtitle">أنشئ حسابك للمتابعة</string>
+    <string name="register_name">الاسم الكامل</string>
+    <string name="register_email">البريد الإلكتروني</string>
+    <string name="register_phone">رقم الهاتف</string>
+    <string name="register_password">كلمة المرور</string>
+    <string name="register_confirm_password">تأكيد كلمة المرور</string>
+    <string name="register_terms_part1">أوافق على </string>
+    <string name="register_terms_link1">شروط الاستخدام</string>
+    <string name="register_terms_part2"> و </string>
+    <string name="register_terms_link2">سياسة الخصوصية</string>
+    <string name="register_button">إنشاء حساب</string>
+    <string name="register_has_account">لديك حساب بالفعل؟ </string>
+    <string name="register_login_link">تسجيل الدخول</string>
+
+    <!-- Erreurs -->
+    <string name="error_invalid_email">البريد الإلكتروني غير صالح</string>
+    <string name="error_invalid_phone">رقم غير صالح (10 أرقام على الأقل)</string>
+    <string name="error_password_mismatch">كلمات المرور غير متطابقة</string>
+
+</resources>

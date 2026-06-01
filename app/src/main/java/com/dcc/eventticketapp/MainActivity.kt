@@ -4,47 +4,39 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
+import androidx.activity.viewModels
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.tooling.preview.Preview
+import com.dcc.eventticketapp.ui.auth.AuthViewModel
+import com.dcc.eventticketapp.ui.auth.screens.LoginScreen
 import com.dcc.eventticketapp.ui.theme.EventTicketAppTheme
+import com.dcc.mobile.ui.navigation.AppNavigation
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    private val authViewModel : AuthViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             EventTicketAppTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    // Test simple — on verra si l'écran fonctionne
-                    TestScreen()
-                }
+                AppNavigation(
+                    authViewModel = authViewModel
+                )
             }
         }
     }
 }
 
+/*
+@Preview(showBackground = true, device = "spec:width=411dp,height=891dp")
 @Composable
-fun TestScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "🎟️ TicketGo fonctionne !",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
-        )
+fun GreetingPreview() {
+    EventTicketAppTheme {
+        LoginScreen()
+        //RegisterScreen()
     }
 }
+*/
