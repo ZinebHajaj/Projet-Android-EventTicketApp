@@ -7,44 +7,70 @@ import androidx.navigation.compose.rememberNavController
 import com.dcc.eventticketapp.ui.auth.AuthViewModel
 import com.dcc.eventticketapp.ui.auth.screens.LoginScreen
 import com.dcc.eventticketapp.ui.auth.screens.RegisterScreen
+import com.dcc.eventticketapp.ui.home.HomeViewModel
+import com.dcc.eventticketapp.ui.home.screens.HomeScreen
+import com.dcc.mobile.ui.splash.SplashScreen
 
 @Composable
 fun AppNavigation(
-    authViewModel : AuthViewModel
+    authViewModel : AuthViewModel,
+    homeViewModel : HomeViewModel
 ) {
     val navController = rememberNavController()
 
 
     NavHost(
         navController = navController,
-        startDestination = "login"
+        startDestination = "splash"
     ) {
 
-        // 1- Login
+        // 1- Splash -> Home
+        composable("splash") {
+            SplashScreen(
+                onSplashFinished = {
+                    navController.navigate("home") {
+                        popUpTo("splash") { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        // 2- Home
+        composable("home") {
+            HomeScreen(
+                viewModel      = homeViewModel,
+                onEventClick   = { eventId ->
+                    navController.navigate("eventDetail/$eventId")
+                },
+                onProfileClick = {
+                    navController.navigate("login")
+                }
+            )
+        }
+
+        // 3- Login
         composable("login") {
             LoginScreen(
                 viewModel = authViewModel,
-                /*onLoginSuccess = {
+                onLoginSuccess = {
                     navController.navigate("home") {
                         popUpTo("login") { inclusive = true }
                     }
-                },*/
+                },
                 onNavigateToRegister = { navController.navigate("register") }
             )
         }
 
 
-        // 2- Register
+        // 4- Register
         composable("register") {
             RegisterScreen(
                 viewModel = authViewModel,
-                /*
                 onRegisterSuccess = {
                     navController.navigate("home") {
                         popUpTo("login") { inclusive = true }
                     }
                 },
-                */
                 onNavigateToLogin = { navController.popBackStack() }
             )
         }
