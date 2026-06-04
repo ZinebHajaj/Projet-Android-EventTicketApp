@@ -48,7 +48,7 @@ fun BottomNavBar(
                 onClick  = {
                     selectedTab = index
                     when (index) {
-                        3 -> onProfileClick()  // ← Profil
+                        4 -> onProfileClick()  // ← Profil
                     }
                 },
 
