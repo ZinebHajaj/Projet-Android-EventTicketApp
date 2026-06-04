@@ -1,4 +1,4 @@
-package com.dcc.mobile.ui.splash
+package com.dcc.eventticketapp.ui.splash
 
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.animation.core.Animatable
