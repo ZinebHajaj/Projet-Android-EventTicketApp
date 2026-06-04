@@ -1,15 +1,18 @@
-package com.dcc.mobile.ui.navigation
+package com.dcc.eventticketapp.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.dcc.eventticketapp.ui.auth.AuthViewModel
 import com.dcc.eventticketapp.ui.auth.screens.LoginScreen
 import com.dcc.eventticketapp.ui.auth.screens.RegisterScreen
+import com.dcc.eventticketapp.ui.eventDetail.screens.EventDetailScreen
 import com.dcc.eventticketapp.ui.home.HomeViewModel
 import com.dcc.eventticketapp.ui.home.screens.HomeScreen
-import com.dcc.mobile.ui.splash.SplashScreen
+import com.dcc.eventticketapp.ui.splash.SplashScreen
 
 @Composable
 fun AppNavigation(
@@ -74,6 +77,18 @@ fun AppNavigation(
                 onNavigateToLogin = { navController.popBackStack() }
             )
         }
+
+        // 5- détails event
+                composable(
+                    route     = "eventDetail/{eventId}",
+                    arguments = listOf(navArgument("eventId") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val eventId = backStackEntry.arguments?.getString("eventId") ?: ""
+                    EventDetailScreen(
+                        eventId = eventId,
+                        onBack  = { navController.popBackStack() }
+                    )
+                }
 
 
     }
