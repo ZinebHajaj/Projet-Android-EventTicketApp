@@ -52,7 +52,8 @@ import com.dcc.eventticketapp.ui.theme.OrangeMain
 fun HomeScreen(
     viewModel      : HomeViewModel,
     onEventClick   : (String) -> Unit,
-    onProfileClick : () -> Unit = {}
+    onProfileClick : () -> Unit = {},
+    onEventsClick  : () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
 
@@ -111,7 +112,9 @@ fun HomeScreen(
             BottomNavBar(
                 surfaceColor   = surfaceColor,
                 textSecond     = textSecond,
-                onProfileClick = onProfileClick
+                onProfileClick = onProfileClick,
+                onEventsClick  = onEventsClick
+
             )
         }
     ) { padding ->

@@ -12,12 +12,17 @@ import com.dcc.eventticketapp.ui.auth.screens.RegisterScreen
 import com.dcc.eventticketapp.ui.eventDetail.screens.EventDetailScreen
 import com.dcc.eventticketapp.ui.home.HomeViewModel
 import com.dcc.eventticketapp.ui.home.screens.HomeScreen
+import com.dcc.eventticketapp.ui.profile.screens.ProfileScreen
 import com.dcc.eventticketapp.ui.splash.SplashScreen
+import com.dcc.eventticketapp.ui.events.EventsViewModel
+import com.dcc.eventticketapp.ui.events.screens.EventsScreen
 
 @Composable
 fun AppNavigation(
     authViewModel : AuthViewModel,
-    homeViewModel : HomeViewModel
+    homeViewModel : HomeViewModel,
+    eventsViewModel : EventsViewModel
+
 ) {
     val navController = rememberNavController()
 
@@ -46,12 +51,37 @@ fun AppNavigation(
                     navController.navigate("eventDetail/$eventId")
                 },
                 onProfileClick = {
-                    navController.navigate("login")
+                    navController.navigate("profile")
+                },
+                onEventsClick  = {
+                    navController.navigate("events")
+                }
+            )
+        }
+        // Evenements
+        composable("events") {
+            EventsScreen(
+                onEventClick = { eventId ->
+                    navController.navigate("eventDetail/$eventId")
+                }
+            )
+        }
+        // 3- Profile
+        composable("profile") {
+            ProfileScreen(
+                onNavigateBack = {
+                    navController.popBackStack()
+                },
+                onLogout = {
+                    navController.navigate("login") {
+                        popUpTo("home") { inclusive = true }
+                    }
                 }
             )
         }
 
-        // 3- Login
+
+        // 4- Login
         composable("login") {
             LoginScreen(
                 viewModel = authViewModel,
@@ -65,7 +95,7 @@ fun AppNavigation(
         }
 
 
-        // 4- Register
+        // 5- Register
         composable("register") {
             RegisterScreen(
                 viewModel = authViewModel,
@@ -78,7 +108,7 @@ fun AppNavigation(
             )
         }
 
-        // 5- détails event
+        // 6- détails event
                 composable(
                     route     = "eventDetail/{eventId}",
                     arguments = listOf(navArgument("eventId") { type = NavType.StringType })

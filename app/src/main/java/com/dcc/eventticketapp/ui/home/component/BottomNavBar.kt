@@ -26,7 +26,8 @@ import com.dcc.eventticketapp.ui.theme.OrangeMain
 fun BottomNavBar(
     surfaceColor   : Color,
     textSecond     : Color,
-    onProfileClick : () -> Unit
+    onProfileClick : () -> Unit,
+    onEventsClick  : () -> Unit = {}
 ) {
     var selectedTab by remember { mutableStateOf(0) }
 
@@ -48,7 +49,8 @@ fun BottomNavBar(
                 onClick  = {
                     selectedTab = index
                     when (index) {
-                        4 -> onProfileClick()  // ← Profil
+                        1 -> onEventsClick()
+                        4 -> onProfileClick()
                     }
                 },
 
