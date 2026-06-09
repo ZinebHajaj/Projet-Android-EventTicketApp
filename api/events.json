@@ -1,0 +1,38 @@
+[
+  {
+    "id": "1",
+    "title": "Concert Jazz Night",
+    "city": "Casablanca",
+    "date": "15 Juin 2025",
+    "imageUrl": "https://picsum.photos/seed/jazz/400/300",
+    "priceStandard": 150.0,
+    "category": "Concerts"
+  },
+  {
+    "id": "2",
+    "title": "Festival Gnaoua",
+    "city": "Essaouira",
+    "date": "20 Juin 2025",
+    "imageUrl": "https://picsum.photos/seed/gnaoua/400/300",
+    "priceStandard": 200.0,
+    "category": "Concerts"
+  },
+  {
+    "id": "3",
+    "title": "Match Raja vs Wydad",
+    "city": "Casablanca",
+    "date": "25 Juin 2025",
+    "imageUrl": "https://picsum.photos/seed/football/400/300",
+    "priceStandard": 100.0,
+    "category": "Sports"
+  },
+  {
+    "id": "4",
+    "title": "Théâtre Mohamed V",
+    "city": "Rabat",
+    "date": "30 Juin 2025",
+    "imageUrl": "https://picsum.photos/seed/theatre/400/300",
+    "priceStandard": 80.0,
+    "category": "Théâtre"
+  }
+]
