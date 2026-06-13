@@ -25,23 +25,20 @@ class HomeViewModel @Inject constructor(
             is HomeIntent.ToggleFavorite -> {
                 toggleFavorite(intent.eventId)
             }
-            is HomeIntent.SelectCategory -> {
-                selectCategory(intent.category) // traitement catégorie
+            is HomeIntent.FilterByCategory -> {
+                filterByCategory(intent.category)
             }
         }
     }
 
 
-    private fun selectCategory(category: String) {
+    fun filterByCategory(category: String) {
         val filtered = if (category == "Tous") {
             _state.value.allEvents
         } else {
             _state.value.allEvents.filter { it.category == category }
         }
-        _state.value = _state.value.copy(
-            selectedCategory = category,
-            upcomingEvents   = filtered
-        )
+        _state.value = _state.value.copy(upcomingEvents = filtered)
     }
 
     private suspend fun loadEvents() {

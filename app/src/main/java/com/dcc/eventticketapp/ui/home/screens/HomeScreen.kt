@@ -35,10 +35,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.dcc.eventticketapp.ui.category.CategoryIntent
+import com.dcc.eventticketapp.ui.category.CategoryViewModel
 import com.dcc.eventticketapp.ui.home.HomeIntent
 import com.dcc.eventticketapp.ui.home.HomeViewModel
 import com.dcc.eventticketapp.ui.home.component.BottomNavBar
-import com.dcc.eventticketapp.ui.home.component.CategoriesRow
+import com.dcc.eventticketapp.ui.category.component.CategoriesRow
 import com.dcc.eventticketapp.ui.home.component.HeroBanner
 import com.dcc.eventticketapp.ui.home.component.PopularEventCard
 import com.dcc.eventticketapp.ui.home.component.SearchBarHome
@@ -51,11 +53,13 @@ import com.dcc.eventticketapp.ui.theme.OrangeMain
 @Composable
 fun HomeScreen(
     viewModel      : HomeViewModel,
+    categoryViewModel : CategoryViewModel,
     onEventClick   : (String) -> Unit,
     onProfileClick : () -> Unit = {},
     onEventsClick  : () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
+    val categoryState by categoryViewModel.state.collectAsState()
 
     // Charge les events au démarrage
     LaunchedEffect(Unit) {
@@ -131,11 +135,13 @@ fun HomeScreen(
                 CategoriesRow(
                     surfaceColor     = surfaceColor,
                     textSecond       = textSecond,
-                    selectedCategory = state.selectedCategory,
-                    onCategoryClick  = { category ->
-                        viewModel.handleIntent(
-                            HomeIntent.SelectCategory(category)
-                        )
+                    selectedCategory = categoryState.selectedCategory,
+                    onCategoryClick = { category ->
+                        // CategoryViewModel → gère la sélection visuelle
+                        categoryViewModel.handleIntent(CategoryIntent.SelectCategory(category))
+
+                        // HomeViewModel --> filtre les événements
+                        viewModel.handleIntent(HomeIntent.FilterByCategory(category))
                     }
                 )
                 //CategoriesRow(surfaceColor, textSecond)

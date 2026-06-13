@@ -1,4 +1,6 @@
-package com.dcc.eventticketapp.ui.home.component
+package com.dcc.eventticketapp.ui.category.component
+
+import com.dcc.eventticketapp.ui.category.CategoryViewModel
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
@@ -40,11 +42,11 @@ fun CategoriesRow(
     ) {
         items(categories) { cat ->
             CategoryItem(
-                category     = cat,
-                isSelected   = selectedCategory == cat.name,
+                category = cat,
+                isSelected = selectedCategory == cat.name,
                 surfaceColor = surfaceColor,
-                textSecond   = textSecond,
-                onClick      = { onCategoryClick(cat.name) }
+                textSecond = textSecond,
+                onClick = { onCategoryClick(cat.name) }
             )
         }
     }

@@ -9,6 +9,7 @@ import androidx.navigation.navArgument
 import com.dcc.eventticketapp.ui.auth.AuthViewModel
 import com.dcc.eventticketapp.ui.auth.screens.LoginScreen
 import com.dcc.eventticketapp.ui.auth.screens.RegisterScreen
+import com.dcc.eventticketapp.ui.category.CategoryViewModel
 import com.dcc.eventticketapp.ui.eventDetail.screens.EventDetailScreen
 import com.dcc.eventticketapp.ui.home.HomeViewModel
 import com.dcc.eventticketapp.ui.home.screens.HomeScreen
@@ -21,6 +22,7 @@ import com.dcc.eventticketapp.ui.events.screens.EventsScreen
 fun AppNavigation(
     authViewModel : AuthViewModel,
     homeViewModel : HomeViewModel,
+    categoryViewModel : CategoryViewModel,
     eventsViewModel : EventsViewModel
 
 ) {
@@ -47,6 +49,7 @@ fun AppNavigation(
         composable("home") {
             HomeScreen(
                 viewModel      = homeViewModel,
+                categoryViewModel = categoryViewModel,
                 onEventClick   = { eventId ->
                     navController.navigate("eventDetail/$eventId")
                 },
