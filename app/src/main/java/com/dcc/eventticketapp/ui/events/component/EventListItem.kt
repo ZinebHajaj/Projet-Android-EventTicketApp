@@ -1,14 +1,26 @@
 package com.dcc.eventticketapp.ui.events.component
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.CalendarMonth
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material.icons.outlined.LocationOn
-import androidx.compose.material3.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.dcc.eventticketapp.data.Entities.EventModel
+import com.dcc.eventticketapp.ui.theme.OrangeLight
 import com.dcc.eventticketapp.ui.theme.OrangeMain
 
 @Composable
@@ -35,97 +48,139 @@ fun EventListItem(
     Surface(
         modifier        = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 5.dp)
+            .padding(horizontal = 16.dp, vertical = 6.dp)
             .clickable { onClick() },
-        shape           = RoundedCornerShape(16.dp),
+        shape           = RoundedCornerShape(20.dp),
         color           = surfaceColor,
-        shadowElevation = 2.dp
+        shadowElevation = 3.dp
     ) {
-        Row(
-            modifier          = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        Column {
+
             // Image
-            AsyncImage(
-                model              = event.imageUrl,
-                contentDescription = event.title,
-                modifier           = Modifier
-                    .size(85.dp)
-                    .clip(RoundedCornerShape(12.dp)),
-                contentScale       = ContentScale.Crop
-            )
+            Box {
+                AsyncImage(
+                    model              = event.imageUrl,
+                    contentDescription = event.title,
+                    modifier           = Modifier
+                        .fillMaxWidth()
+                        .height(160.dp)
+                        .clip(
+                            RoundedCornerShape(
+                                topStart = 20.dp,
+                                topEnd   = 20.dp
+                            )
+                        ),
+                    contentScale = ContentScale.Crop
+                )
 
-            Spacer(modifier = Modifier.width(14.dp))
-
-            // Infos
-            Column(modifier = Modifier.weight(1f)) {
-
-                // Badge catégorie
+                // Badge catégorie sur l'image
                 Surface(
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .align(Alignment.TopStart),
                     shape = RoundedCornerShape(20.dp),
-                    color = OrangeMain.copy(alpha = 0.15f)
+                    color = OrangeMain
                 ) {
                     Text(
                         text     = event.category,
                         fontSize = 10.sp,
-                        color    = OrangeMain,
+                        color    = Color.White,
+                        fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.padding(
-                            horizontal = 8.dp, vertical = 2.dp
+                            horizontal = 10.dp, vertical = 4.dp
                         )
                     )
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
+                // Bouton favori sur l'image
+                Surface(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .size(36.dp)
+                        .align(Alignment.TopEnd),
+                    shape = RoundedCornerShape(50.dp),
+                    color = Color.White.copy(alpha = 0.9f)
+                ) {
+                    IconButton(onClick = onFavoriteClick) {
+                        Icon(
+                            imageVector = if (event.isFavorite)
+                                Icons.Filled.Favorite
+                            else
+                                Icons.Outlined.FavoriteBorder,
+                            contentDescription = "Favori",
+                            tint     = if (event.isFavorite) OrangeMain else textSecond,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
 
+            // Infos event
+            Column(modifier = Modifier.padding(14.dp)) {
+
+                // Titre
                 Text(
                     text       = event.title,
-                    fontSize   = 14.sp,
+                    fontSize   = 16.sp,
                     fontWeight = FontWeight.Bold,
                     color      = textPrimary,
                     maxLines   = 2,
                     overflow   = TextOverflow.Ellipsis
                 )
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
+                // Date + Lieu
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Outlined.LocationOn, null,
-                        modifier = Modifier.size(12.dp), tint = textSecond)
-                    Spacer(modifier = Modifier.width(3.dp))
-                    Text(event.city, fontSize = 12.sp, color = textSecond)
-                }
-
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(Icons.Outlined.CalendarMonth, null,
-                        modifier = Modifier.size(12.dp), tint = textSecond)
-                    Spacer(modifier = Modifier.width(3.dp))
+                    Icon(
+                        Icons.Outlined.CalendarMonth, null,
+                        modifier = Modifier.size(13.dp),
+                        tint     = OrangeMain
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
                     Text(event.date, fontSize = 12.sp, color = textSecond)
+
+                    Spacer(modifier = Modifier.width(12.dp))
+
+                    Icon(
+                        Icons.Outlined.LocationOn, null,
+                        modifier = Modifier.size(13.dp),
+                        tint     = OrangeMain
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text     = event.city,
+                        fontSize = 12.sp,
+                        color    = textSecond,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
                 }
 
-                Spacer(modifier = Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
-                Text(
-                    text       = "Depuis ${event.priceStandard.toInt()} MAD",
-                    fontSize   = 13.sp,
-                    fontWeight = FontWeight.Bold,
-                    color      = OrangeMain
-                )
-            }
-
-            // Favori
-            IconButton(onClick = onFavoriteClick) {
-                Icon(
-                    imageVector = if (event.isFavorite)
-                        Icons.Filled.Favorite
-                    else
-                        Icons.Outlined.FavoriteBorder,
-                    contentDescription = "Favori",
-                    tint = if (event.isFavorite) OrangeMain else textSecond,
-                    modifier = Modifier.size(22.dp)
-                )
+                // Prix
+                Row(
+                    modifier          = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = OrangeLight
+                    ) {
+                        Text(
+                            text       = "Depuis ${event.priceStandard.toInt()} MAD",
+                            fontSize   = 13.sp,
+                            fontWeight = FontWeight.Bold,
+                            color      = OrangeMain,
+                            modifier   = Modifier.padding(
+                                horizontal = 10.dp, vertical = 4.dp
+                            )
+                        )
+                    }
+                }
             }
         }
     }
 }
+
