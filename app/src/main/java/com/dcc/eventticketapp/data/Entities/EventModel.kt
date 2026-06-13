@@ -1,28 +1,33 @@
 package com.dcc.eventticketapp.data.Entities
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+@Entity(tableName = "event")
 data class EventModel(
+
     @SerializedName("id")
-    val id            : String  = "",
+    @PrimaryKey
+    val id: String = "",
 
     @SerializedName("title")
-    val title         : String  = "",
+    val title: String = "",
 
     @SerializedName("city")
-    val city          : String  = "",
+    val city: String = "",
 
     @SerializedName("date")
-    val date          : String  = "",
+    val date: String = "",
 
     @SerializedName("imageUrl")
-    val imageUrl      : String  = "",
+    val imageUrl: String = "",
 
     @SerializedName("priceStandard")
-    val priceStandard : Double  = 0.0,
+    val priceStandard: Double = 0.0,
 
     @SerializedName("category")
-    val category      : String  = "Concerts",
+    val category: String = "Concerts",
 
-    val isFavorite    : Boolean = false
+    val isFavorite: Boolean = false
 )
