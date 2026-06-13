@@ -3,6 +3,7 @@ package com.dcc.eventticketapp.ui.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dcc.eventticketapp.data.Entities.User
+import com.dcc.eventticketapp.data.Repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,7 +11,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ProfileViewModel @Inject constructor() : ViewModel() {
+class ProfileViewModel @Inject constructor(
+    private val authRepository: AuthRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(ProfileViewState())
     val state: StateFlow<ProfileViewState> = _state
@@ -20,28 +23,23 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
     fun handleIntent(intent: ProfileIntent) {
         when (intent) {
 
-            // Charger le profil (données simulées pour l'instant)
             is ProfileIntent.LoadProfile -> {
                 viewModelScope.launch {
+
                     _state.value = _state.value.copy(
                         isLoading = true
                     )
-                    // Données simulées — à remplacer par Firebase plus tard
-                    val fakeUser = User(
-                        userId   = "001",
-                        fullName = "El Mellas Manar",
-                        email    = "manar@ticketgo.ma",
-                        phone    = "+212 6XX XXX XXX"
-                    )
+
+                    val user = authRepository.getCurrentUser()
+
                     _state.value = _state.value.copy(
-                        isLoading         = false,
-                        user              = fakeUser,
-                        editName          = fakeUser.fullName,
-                        editEmail         = fakeUser.email,
-                        editPhone         = fakeUser.phone,
-                        reservationsCount = 12,
-                        favoritesCount    = 5,
-                        eventsCount       = 3
+                        isLoading = false,
+                        user = user,
+                        isAuthenticated = user != null,
+
+                        editName = user?.fullName ?: "",
+                        editEmail = user?.email ?: "",
+                        editPhone = user?.phone ?: ""
                     )
                 }
             }
@@ -59,20 +57,36 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
 
             // Sauvegarder les modifications
             is ProfileIntent.SubmitEditProfile -> {
+
                 viewModelScope.launch {
-                    _state.value = _state.value.copy(isLoading = true)
-                    val updatedUser = User(
-                        userId   = _state.value.user?.userId ?: "",
-                        fullName = _state.value.editName,
-                        email    = _state.value.editEmail,
-                        phone    = _state.value.editPhone
-                    )
-                    _state.value = _state.value.copy(
-                        isLoading      = false,
-                        user           = updatedUser,
-                        isSuccess      = true,
-                        showEditDialog = false
-                    )
+
+                    try {
+
+                        _state.value = _state.value.copy(
+                            isLoading = true,
+                            error = null
+                        )
+
+                        val updatedUser =
+                            authRepository.updateProfile(
+                                fullName = _state.value.editName,
+                                phone = _state.value.editPhone
+                            )
+
+                        _state.value = _state.value.copy(
+                            isLoading = false,
+                            user = updatedUser,
+                            isSuccess = true,
+                            showEditDialog = false
+                        )
+
+                    } catch (e: Exception) {
+
+                        _state.value = _state.value.copy(
+                            isLoading = false,
+                            error = e.message
+                        )
+                    }
                 }
             }
 
@@ -92,7 +106,14 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
 
             // Déconnexion
             is ProfileIntent.Logout -> {
-                _state.value = _state.value.copy(isLoggedOut = true)
+
+                authRepository.logout()
+
+                _state.value = _state.value.copy(
+                    user = null,
+                    isAuthenticated = false,
+                    isLoggedOut = true
+                )
             }
 
             // Reset

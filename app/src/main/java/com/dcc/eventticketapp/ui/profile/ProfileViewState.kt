@@ -7,6 +7,9 @@ data class ProfileViewState(
     // État général
     val isLoading       : Boolean = false,
     val user            : User?   = null,
+
+    val isAuthenticated: Boolean = false,
+
     val error           : String? = null,
     val isSuccess       : Boolean = false,
     val isLoggedOut     : Boolean = false,

@@ -18,4 +18,10 @@ sealed class AuthIntent {
 
     // Commun
     object ResetState : AuthIntent()
+
+    //Deconnexion
+    object Logout : AuthIntent()
+
+    // Change session
+    object CheckSession : AuthIntent()
 }
