@@ -17,13 +17,16 @@ import com.dcc.eventticketapp.ui.profile.screens.ProfileScreen
 import com.dcc.eventticketapp.ui.splash.SplashScreen
 import com.dcc.eventticketapp.ui.events.EventsViewModel
 import com.dcc.eventticketapp.ui.events.screens.EventsScreen
-
+import com.dcc.eventticketapp.ui.favorites.FavoritesViewModel
+import com.dcc.eventticketapp.ui.favorites.screens.FavoritesScreen
 @Composable
 fun AppNavigation(
     authViewModel : AuthViewModel,
     homeViewModel : HomeViewModel,
     categoryViewModel : CategoryViewModel,
-    eventsViewModel : EventsViewModel
+    eventsViewModel : EventsViewModel,
+    favoritesViewModel : FavoritesViewModel
+
 
 ) {
     val navController = rememberNavController()
@@ -58,6 +61,9 @@ fun AppNavigation(
                 },
                 onEventsClick  = {
                     navController.navigate("events")
+                },
+                onFavoritesClick = {
+                    navController.navigate("favorites")
                 }
             )
         }
@@ -83,6 +89,17 @@ fun AppNavigation(
             )
         }
 
+        // Route favoris
+        composable("favorites") {
+            FavoritesScreen(
+                onEventClick = { eventId ->
+                    navController.navigate("eventDetail/$eventId")
+                },
+                onExplore = {
+                    navController.navigate("events")
+                }
+            )
+        }
 
         // 4- Login
         composable("login") {
