@@ -56,7 +56,8 @@ fun HomeScreen(
     categoryViewModel : CategoryViewModel,
     onEventClick   : (String) -> Unit,
     onProfileClick : () -> Unit = {},
-    onEventsClick  : () -> Unit = {}
+    onEventsClick  : () -> Unit = {},
+    onFavoritesClick  : () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsState()
     val categoryState by categoryViewModel.state.collectAsState()
@@ -117,7 +118,8 @@ fun HomeScreen(
                 surfaceColor   = surfaceColor,
                 textSecond     = textSecond,
                 onProfileClick = onProfileClick,
-                onEventsClick  = onEventsClick
+                onEventsClick  = onEventsClick,
+                onFavoritesClick = onFavoritesClick
 
             )
         }

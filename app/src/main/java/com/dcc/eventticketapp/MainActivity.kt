@@ -8,6 +8,7 @@ import androidx.activity.viewModels
 import com.dcc.eventticketapp.ui.auth.AuthViewModel
 import com.dcc.eventticketapp.ui.category.CategoryViewModel
 import com.dcc.eventticketapp.ui.events.EventsViewModel
+import com.dcc.eventticketapp.ui.favorites.FavoritesViewModel
 import com.dcc.eventticketapp.ui.home.HomeViewModel
 import com.dcc.eventticketapp.ui.theme.EventTicketAppTheme
 import com.dcc.eventticketapp.ui.navigation.AppNavigation
@@ -20,6 +21,7 @@ class MainActivity : ComponentActivity() {
     private val categoryViewModel : CategoryViewModel by viewModels()
 
     private val eventsViewModel : EventsViewModel by viewModels()
+    private val favoritesViewModel : FavoritesViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +33,8 @@ class MainActivity : ComponentActivity() {
                     authViewModel = authViewModel,
                     homeViewModel = homeViewModel,
                     categoryViewModel = categoryViewModel,
-                    eventsViewModel = eventsViewModel
+                    eventsViewModel = eventsViewModel,
+                    favoritesViewModel = favoritesViewModel
                 )
             }
         }
