@@ -82,6 +82,20 @@ class AuthViewModel @Inject constructor(
             is AuthIntent.ResetState -> {
                 _state.value = AuthViewState()
             }
+
+            // Logout
+            is AuthIntent.Logout -> {
+                repository.logout()
+
+                _state.value = AuthViewState()
+            }
+
+            //session
+            is AuthIntent.CheckSession -> {
+                viewModelScope.launch {
+                    checkSession()
+                }
+            }
         }
     }
 
@@ -125,6 +139,19 @@ class AuthViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 isLoading = false,
                 error     = e.message ?: "Erreur d'inscription"
+            )
+        }
+    }
+
+    private suspend fun checkSession() {
+
+        val user = repository.getCurrentUser()
+
+        if (user != null) {
+
+            _state.value = _state.value.copy(
+                user = user,
+                isAuthenticated = true
             )
         }
     }

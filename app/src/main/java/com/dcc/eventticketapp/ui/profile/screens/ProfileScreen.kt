@@ -30,6 +30,22 @@ fun ProfileScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
+    LaunchedEffect(state.error) {
+
+        state.error?.let {
+            android.util.Log.e("PROFILE", it)
+        }
+    }
+
+    if (!state.isLoading && !state.isAuthenticated) {
+
+        LoginRequiredContent(
+            onLoginClick = onLogout
+        )
+
+        return
+    }
+
     // Couleurs adaptatives dark/light
     val bgColor      = MaterialTheme.colorScheme.background
     val surfaceColor = MaterialTheme.colorScheme.surface
@@ -294,11 +310,14 @@ fun ProfileScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                     OutlinedTextField(
-                        value         = state.editEmail,
-                        onValueChange = {
-                            viewModel.handleIntent(ProfileIntent.EmailChanged(it))
-                        },
+                        value = state.editEmail,
+                        onValueChange = {},
+                        readOnly = true,
+                        enabled = false,
                         label      = { Text("Email") },
+                        supportingText = {
+                            Text("L'adresse email ne peut pas être modifiée")
+                        },
                         singleLine = true,
                         shape      = RoundedCornerShape(12.dp),
                         colors     = OutlinedTextFieldDefaults.colors(
