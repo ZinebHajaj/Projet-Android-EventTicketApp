@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.dcc.eventticketapp.ui.theme.OrangeMain
 
 @Composable
 fun EventsSearchBar(
@@ -39,7 +40,7 @@ fun EventsSearchBar(
         },
         shape  = RoundedCornerShape(30.dp),
         colors = OutlinedTextFieldDefaults.colors(
-            focusedBorderColor   = Color(0xFFD4622A),
+            focusedBorderColor = OrangeMain,
             unfocusedBorderColor = Color(0xFFEEEEEE),
             focusedContainerColor   = surfaceColor,
             unfocusedContainerColor = surfaceColor,
