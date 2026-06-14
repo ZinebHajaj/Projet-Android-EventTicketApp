@@ -12,6 +12,7 @@ import com.dcc.eventticketapp.ui.favorites.FavoritesViewModel
 import com.dcc.eventticketapp.ui.home.HomeViewModel
 import com.dcc.eventticketapp.ui.theme.EventTicketAppTheme
 import com.dcc.eventticketapp.ui.navigation.AppNavigation
+import com.dcc.eventticketapp.ui.ticket.TicketViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -22,6 +23,8 @@ class MainActivity : ComponentActivity() {
 
     private val eventsViewModel : EventsViewModel by viewModels()
     private val favoritesViewModel : FavoritesViewModel by viewModels()
+
+    private val ticketViewModel   : TicketViewModel by viewModels()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +37,8 @@ class MainActivity : ComponentActivity() {
                     homeViewModel = homeViewModel,
                     categoryViewModel = categoryViewModel,
                     eventsViewModel = eventsViewModel,
-                    favoritesViewModel = favoritesViewModel
+                    favoritesViewModel = favoritesViewModel,
+                    ticketViewModel    = ticketViewModel
                 )
             }
         }

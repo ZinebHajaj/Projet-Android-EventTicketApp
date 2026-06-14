@@ -57,7 +57,8 @@ fun HomeScreen(
     onEventClick   : (String) -> Unit,
     onProfileClick : () -> Unit = {},
     onEventsClick  : () -> Unit = {},
-    onFavoritesClick  : () -> Unit = {}
+    onFavoritesClick  : () -> Unit = {},
+    onTicketsClick : () -> Unit = {},
 ) {
     val state by viewModel.state.collectAsState()
     val categoryState by categoryViewModel.state.collectAsState()
@@ -119,7 +120,8 @@ fun HomeScreen(
                 textSecond     = textSecond,
                 onProfileClick = onProfileClick,
                 onEventsClick  = onEventsClick,
-                onFavoritesClick = onFavoritesClick
+                onFavoritesClick = onFavoritesClick,
+                onTicketsClick = onTicketsClick
 
             )
         }

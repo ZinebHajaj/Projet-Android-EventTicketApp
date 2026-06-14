@@ -103,7 +103,9 @@ dependencies {
 
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
-
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
+
+    //la dépendance QR code
+    implementation("com.google.zxing:core:3.5.2")
 
 }
