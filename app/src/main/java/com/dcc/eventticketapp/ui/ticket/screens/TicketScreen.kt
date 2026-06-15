@@ -77,7 +77,7 @@ fun TicketScreen(
         when {
             state.isLoading -> {
                 Box(
-                    modifier         = Modifier.fillMaxSize(),
+                    modifier         = Modifier.fillMaxSize().padding(padding),
                     contentAlignment = Alignment.Center
                 ) {
                     CircularProgressIndicator(color = OrangeMain)
