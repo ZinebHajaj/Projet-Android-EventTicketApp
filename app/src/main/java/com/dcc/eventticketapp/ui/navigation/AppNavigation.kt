@@ -1,6 +1,8 @@
 package com.dcc.eventticketapp.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,19 +21,28 @@ import com.dcc.eventticketapp.ui.events.EventsViewModel
 import com.dcc.eventticketapp.ui.events.screens.EventsScreen
 import com.dcc.eventticketapp.ui.favorites.FavoritesViewModel
 import com.dcc.eventticketapp.ui.favorites.screens.FavoritesScreen
+import com.dcc.eventticketapp.ui.profile.ProfileDestination
+import com.dcc.eventticketapp.ui.profile.screens.AboutScreen
+import com.dcc.eventticketapp.ui.profile.screens.HelpScreen
+import com.dcc.eventticketapp.ui.profile.screens.PersonalInfoScreen
+import com.dcc.eventticketapp.ui.profile.screens.PrivacyScreen
+import com.dcc.eventticketapp.ui.profile.screens.ReservationsScreen
+import com.dcc.eventticketapp.ui.theme.AppPreferencesViewModel
+
 @Composable
 fun AppNavigation(
     authViewModel : AuthViewModel,
     homeViewModel : HomeViewModel,
     categoryViewModel : CategoryViewModel,
     eventsViewModel : EventsViewModel,
-    favoritesViewModel : FavoritesViewModel
+    favoritesViewModel : FavoritesViewModel,
+    prefsViewModel     : AppPreferencesViewModel
 
 
 ) {
     val navController = rememberNavController()
 
-
+    val prefsState by prefsViewModel.state.collectAsState()
     NavHost(
         navController = navController,
         startDestination = "splash"
@@ -77,6 +88,7 @@ fun AppNavigation(
         }
         // 3- Profile
         composable("profile") {
+
             ProfileScreen(
                 onNavigateBack = {
                     navController.popBackStack()
@@ -85,7 +97,62 @@ fun AppNavigation(
                     navController.navigate("login") {
                         popUpTo("home") { inclusive = true }
                     }
-                }
+                },
+                onNavigateTo   = { destination ->
+                    when (destination) {
+                        is ProfileDestination.PersonalInfo ->
+                            navController.navigate("profile/personal_info")
+                        is ProfileDestination.Reservations ->
+                            navController.navigate("profile/reservations")
+                        is ProfileDestination.Favorites ->
+                            navController.navigate("favorites")
+                        is ProfileDestination.Help    ->
+                            navController.navigate("profile/help")
+                        is ProfileDestination.Privacy ->
+                            navController.navigate("profile/privacy")
+                        is ProfileDestination.About   ->
+                            navController.navigate("profile/about")
+                    }
+                },
+                // ── Préférences depuis DataStore ──────────────────────
+                isDarkMode            = prefsState.isDarkMode,
+                notificationsEnabled  = prefsState.notificationsEnabled,
+                currentLanguage       = prefsState.language,
+                onToggleDarkMode      = { prefsViewModel.toggleDarkMode() },
+                onToggleNotifications = { prefsViewModel.toggleNotifications() },
+                onLanguageChange      = { lang -> prefsViewModel.setLanguage(lang) }
+
+            )
+        }
+        // ── Sous-routes Profile ── DANS LE NavHost ────────────
+        composable("profile/personal_info") {
+            PersonalInfoScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("profile/reservations") {
+            ReservationsScreen(
+                onBack    = { navController.popBackStack() },
+                onExplore = { navController.navigate("events") }
+            )
+        }
+
+        composable("profile/help") {
+            HelpScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("profile/privacy") {
+            PrivacyScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("profile/about") {
+            AboutScreen(
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -142,4 +209,5 @@ fun AppNavigation(
 
 
     }
+
 }

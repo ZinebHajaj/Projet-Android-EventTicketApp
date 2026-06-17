@@ -14,6 +14,9 @@ sealed class ProfileIntent {
     // Modifier le téléphone
     data class PhoneChanged(val phone: String) : ProfileIntent()
 
+    // Modifier la photo de profil (URI galerie)  ← nouveau
+    data class PhotoChanged(val uri: String) : ProfileIntent()
+
     // Toggle dark mode
     object ToggleDarkMode : ProfileIntent()
 
@@ -28,4 +31,7 @@ sealed class ProfileIntent {
 
     // Réinitialiser l'état
     object ResetState : ProfileIntent()
+
+    // ← Ajouter navigation vers sous-pages
+    data class NavigateTo(val destination: ProfileDestination) : ProfileIntent()
 }
