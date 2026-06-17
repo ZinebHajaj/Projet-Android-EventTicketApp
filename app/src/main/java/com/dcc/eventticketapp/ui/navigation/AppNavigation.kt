@@ -27,11 +27,9 @@ fun AppNavigation(
     authViewModel : AuthViewModel,
     homeViewModel : HomeViewModel,
     categoryViewModel : CategoryViewModel,
-    eventsViewModel : EventsViewModel,
-    favoritesViewModel : FavoritesViewModel,
-    ticketViewModel    : TicketViewModel
-
-
+    ticketViewModel    : TicketViewModel,
+    onGoogleSignIn    : () -> Unit,
+    onFacebookSignIn  : () -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -117,6 +115,8 @@ fun AppNavigation(
                         popUpTo("login") { inclusive = true }
                     }
                 },
+                onGoogleSignInClick = onGoogleSignIn,
+                onFacebookSignInClick = onFacebookSignIn,
                 onNavigateToRegister = { navController.navigate("register") }
             )
         }
