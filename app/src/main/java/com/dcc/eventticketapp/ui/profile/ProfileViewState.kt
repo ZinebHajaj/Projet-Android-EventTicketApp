@@ -16,6 +16,9 @@ data class ProfileViewState(
     val editEmail       : String  = "",
     val editPhone       : String  = "",
 
+    // Photo de profil locale (URI)
+    val photoUri        : String? = null,   // ← nouveau
+
     // Préférences
     val isDarkMode          : Boolean = false,
     val notificationsEnabled: Boolean = true,
@@ -27,5 +30,7 @@ data class ProfileViewState(
     // Statistiques
     val reservationsCount   : Int     = 0,
     val favoritesCount      : Int     = 0,
-    val eventsCount         : Int     = 0
+    val eventsCount         : Int     = 0,
+
+    val navigateTo          : ProfileDestination?  = null
 )

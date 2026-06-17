@@ -23,16 +23,12 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
             // Charger le profil (données simulées pour l'instant)
             is ProfileIntent.LoadProfile -> {
                 viewModelScope.launch {
-                    _state.value = _state.value.copy(
-                        isLoading = true
-                    )
-                    // Données simulées — à remplacer par Firebase plus tard
-                    val fakeUser = User(
-                        userId   = "001",
-                        fullName = "El Mellas Manar",
-                        email    = "manar@ticketgo.ma",
-                        phone    = "+212 6XX XXX XXX"
-                    )
+                    if (_state.value.user != null) return@launch
+
+                    _state.value = _state.value.copy(isLoading = true)
+
+                    val user = authRepository.getCurrentUser()
+
                     _state.value = _state.value.copy(
                         isLoading         = false,
                         user              = fakeUser,
@@ -45,6 +41,9 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
                     )
                 }
             }
+            is ProfileIntent.NavigateTo -> {
+                _state.value = _state.value.copy(navigateTo = intent.destination)
+            }
 
             // Champs édition
             is ProfileIntent.NameChanged -> {
@@ -55,6 +54,10 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
             }
             is ProfileIntent.PhoneChanged -> {
                 _state.value = _state.value.copy(editPhone = intent.phone)
+            }
+            // Nouvelle photo de profil sélectionnée
+            is ProfileIntent.PhotoChanged -> {
+                _state.value = _state.value.copy(photoUri = intent.uri)
             }
 
             // Sauvegarder les modifications
@@ -116,5 +119,9 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
 
     fun hideLogoutDialog() {
         _state.value = _state.value.copy(showLogoutDialog = false)
+    }
+
+    fun clearNavigation() {
+        _state.value = _state.value.copy(navigateTo = null)
     }
 }
