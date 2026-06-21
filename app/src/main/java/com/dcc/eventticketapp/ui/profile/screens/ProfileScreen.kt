@@ -16,7 +16,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.dcc.eventticketapp.ui.profile.ProfileDestination
 import com.dcc.eventticketapp.ui.profile.ProfileIntent
 import com.dcc.eventticketapp.ui.profile.ProfileViewModel
 import com.dcc.eventticketapp.ui.profile.components.*
@@ -27,26 +26,9 @@ import com.dcc.eventticketapp.ui.theme.OrangeMain
 fun ProfileScreen(
     onNavigateBack : () -> Unit = {},
     onLogout       : () -> Unit = {},
-    onNavigateTo   : (ProfileDestination) -> Unit = {},
-    // ── Préférences globales (depuis AppPreferencesViewModel / DataStore) ──
-    isDarkMode            : Boolean          = false,
-    notificationsEnabled  : Boolean          = true,
-    currentLanguage       : String           = "fr",
-    onToggleDarkMode      : () -> Unit        = {},
-    onToggleNotifications : () -> Unit        = {},
-    onLanguageChange      : (String) -> Unit  = {},
-
     viewModel      : ProfileViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-
-    // Observer la navigation
-    LaunchedEffect(state.navigateTo) {
-        state.navigateTo?.let { dest ->
-            onNavigateTo(dest)
-            viewModel.clearNavigation()
-        }
-    }
 
     LaunchedEffect(state.error) {
 
@@ -149,32 +131,17 @@ fun ProfileScreen(
                         ProfileMenuItem(
                             icon     = Icons.Outlined.Person,
                             label    = "Informations personnelles",
-                            subtitle = state.user?.phone ?: "Téléphone non défini",
-                            onClick  = {   // ← ajouter
-                                viewModel.handleIntent(
-                                    ProfileIntent.NavigateTo(ProfileDestination.PersonalInfo)
-                                )
-                            }
+                            subtitle = state.user?.phone ?: "Téléphone non défini"
                         ),
                         ProfileMenuItem(
                             icon     = Icons.Outlined.ConfirmationNumber,
                             label    = "Mes réservations",
-                            subtitle = "${state.reservationsCount} billets achetés",
-                            onClick  = {   // ← ajouter
-                                viewModel.handleIntent(
-                                    ProfileIntent.NavigateTo(ProfileDestination.Reservations)
-                                )
-                            }
+                            subtitle = "${state.reservationsCount} billets achetés"
                         ),
                         ProfileMenuItem(
                             icon     = Icons.Outlined.Favorite,
                             label    = "Mes favoris",
-                            subtitle = "${state.favoritesCount} événements sauvegardés",
-                            onClick  = {   // ← ajouté
-                                viewModel.handleIntent(
-                                    ProfileIntent.NavigateTo(ProfileDestination.Favorites)
-                                )
-                            }
+                            subtitle = "${state.favoritesCount} événements sauvegardés"
                         ),
                         ProfileMenuItem(
                             icon     = Icons.Outlined.CreditCard,
@@ -200,21 +167,25 @@ fun ProfileScreen(
                             subtitle  = if (state.notificationsEnabled) "Activées" else "Désactivées",
                             hasToggle = true,
                             isToggled = state.notificationsEnabled,
-                            onToggle  = onToggleNotifications
+                            onToggle  = {
+                                viewModel.handleIntent(ProfileIntent.ToggleNotifications)
+                            }
                         ),
                         ProfileMenuItem(
                             icon     = Icons.Outlined.Language,
                             label    = "Langue",
-                            subtitle = if (currentLanguage == "fr") "Français" else "English"
+                            subtitle = "Français"
                         ),
                         ProfileMenuItem(
-                            icon      = if (isDarkMode) Icons.Outlined.LightMode
+                            icon      = if (state.isDarkMode) Icons.Outlined.LightMode
                             else Icons.Outlined.DarkMode,
                             label     = "Mode sombre",
-                            subtitle  = if (isDarkMode) "Activé" else "Désactivé",
+                            subtitle  = if (state.isDarkMode) "Activé" else "Désactivé",
                             hasToggle = true,
-                            isToggled = isDarkMode,
-                            onToggle  = onToggleDarkMode
+                            isToggled = state.isDarkMode,
+                            onToggle  = {
+                                viewModel.handleIntent(ProfileIntent.ToggleDarkMode)
+                            }
                         ),
                     )
                 )
@@ -232,32 +203,17 @@ fun ProfileScreen(
                         ProfileMenuItem(
                             icon     = Icons.AutoMirrored.Outlined.HelpOutline,
                             label    = "Centre d'aide",
-                            subtitle = "FAQ et assistance",
-                            onClick  = {   // ← ajouter
-                                viewModel.handleIntent(
-                                    ProfileIntent.NavigateTo(ProfileDestination.Help)
-                                )
-                            }
+                            subtitle = "FAQ et assistance"
                         ),
                         ProfileMenuItem(
                             icon     = Icons.Outlined.Shield,
                             label    = "Confidentialité",
-                            subtitle = "Politique de données",
-                            onClick  = {   // ← ajouter
-                                viewModel.handleIntent(
-                                    ProfileIntent.NavigateTo(ProfileDestination.Privacy)
-                                )
-                            }
+                            subtitle = "Politique de données"
                         ),
                         ProfileMenuItem(
                             icon     = Icons.Outlined.Info,
                             label    = "À propos",
-                            subtitle = "Version 1.0.0",
-                            onClick  = {   // ← ajouté
-                                viewModel.handleIntent(
-                                    ProfileIntent.NavigateTo(ProfileDestination.About)
-                                )
-                            }
+                            subtitle = "Version 1.0.0"
                         ),
                     )
                 )

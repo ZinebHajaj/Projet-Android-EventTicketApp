@@ -25,9 +25,10 @@ class ProfileViewModel @Inject constructor(
 
             is ProfileIntent.LoadProfile -> {
                 viewModelScope.launch {
-                    if (_state.value.user != null) return@launch
 
-                    _state.value = _state.value.copy(isLoading = true)
+                    _state.value = _state.value.copy(
+                        isLoading = true
+                    )
 
                     val user = authRepository.getCurrentUser()
 
@@ -42,9 +43,6 @@ class ProfileViewModel @Inject constructor(
                     )
                 }
             }
-            is ProfileIntent.NavigateTo -> {
-                _state.value = _state.value.copy(navigateTo = intent.destination)
-            }
 
             // Champs édition
             is ProfileIntent.NameChanged -> {
@@ -55,10 +53,6 @@ class ProfileViewModel @Inject constructor(
             }
             is ProfileIntent.PhoneChanged -> {
                 _state.value = _state.value.copy(editPhone = intent.phone)
-            }
-            // Nouvelle photo de profil sélectionnée
-            is ProfileIntent.PhotoChanged -> {
-                _state.value = _state.value.copy(photoUri = intent.uri)
             }
 
             // Sauvegarder les modifications
@@ -143,9 +137,5 @@ class ProfileViewModel @Inject constructor(
 
     fun hideLogoutDialog() {
         _state.value = _state.value.copy(showLogoutDialog = false)
-    }
-
-    fun clearNavigation() {
-        _state.value = _state.value.copy(navigateTo = null)
     }
 }

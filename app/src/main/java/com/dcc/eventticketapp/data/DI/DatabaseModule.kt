@@ -3,7 +3,6 @@ package com.dcc.eventticketapp.data.DI
 import android.content.Context
 import com.dcc.eventticketapp.data.Database.EventDao
 import com.dcc.eventticketapp.data.Database.EventDatabase
-import com.dcc.eventticketapp.data.preferences.AppPreferencesDataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -29,10 +28,4 @@ object DatabaseModule {
     ): EventDao {
         return database.eventDao()
     }
-
-    @Provides
-    @Singleton
-    fun provideAppPreferencesDataStore(
-        @ApplicationContext context: Context
-    ): AppPreferencesDataStore = AppPreferencesDataStore(context)
 }

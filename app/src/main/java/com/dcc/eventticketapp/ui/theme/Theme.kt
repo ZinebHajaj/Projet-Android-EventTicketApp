@@ -6,12 +6,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.lifecycle.ViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
+
 
 private val LightColorScheme = lightColorScheme(
     primary             = OrangeMain,
@@ -59,19 +54,4 @@ fun EventTicketAppTheme(
         typography  = Typography,
         content     = content
     )
-}
-
-@HiltViewModel
-class ThemeViewModel @Inject constructor() : ViewModel() {
-
-    private val _isDarkMode = MutableStateFlow(false)
-    val isDarkMode: StateFlow<Boolean> = _isDarkMode.asStateFlow()
-
-    fun toggleDarkMode() {
-        _isDarkMode.value = !_isDarkMode.value
-    }
-
-    fun setDarkMode(enabled: Boolean) {
-        _isDarkMode.value = enabled
-    }
 }
