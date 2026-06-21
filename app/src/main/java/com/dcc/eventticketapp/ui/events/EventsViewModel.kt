@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dcc.eventticketapp.data.Entities.EventModel
 import com.dcc.eventticketapp.data.Repository.EventRepository
+import com.dcc.eventticketapp.data.Repository.FavoritesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +13,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EventsViewModel @Inject constructor(
-    private val repository: EventRepository
+    private val repository: EventRepository,
+    private val favoritesRepository: FavoritesRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(EventsViewState())
@@ -52,20 +54,36 @@ class EventsViewModel @Inject constructor(
             }
 
             is EventsIntent.ToggleFavorite -> {
-                val updated = _state.value.allEvents.map { event ->
-                    if (event.id == intent.eventId)
-                        event.copy(isFavorite = !event.isFavorite)
-                    else event
+                viewModelScope.launch {
+                    val event = _state.value.allEvents.find { it.id == intent.eventId }
+                        ?: return@launch
+                    try {
+                    if (event.isFavorite) {
+                        favoritesRepository.removeFavorite(intent.eventId)
+                    } else {
+                        favoritesRepository.addFavorite(intent.eventId)
+                    }
+
+                        // Mise à jour optimiste de l'état local pour un rendu instantané
+                        val updated = _state.value.allEvents.map { e ->
+                            if (e.id == intent.eventId)
+                                e.copy(isFavorite = !e.isFavorite)
+                            else e
+                        }
+                        val filtered = filterEvents(
+                            events   = updated,
+                            category = _state.value.selectedCategory,
+                            query    = _state.value.searchQuery
+                        )
+                        _state.value = _state.value.copy(
+                            allEvents      = updated,
+                            filteredEvents = filtered
+                        )
+
+                    } catch (e: Exception) {
+                        _state.value = _state.value.copy(error = e.message)
+                    }
                 }
-                val filtered = filterEvents(
-                    events   = updated,
-                    category = _state.value.selectedCategory,
-                    query    = _state.value.searchQuery
-                )
-                _state.value = _state.value.copy(
-                    allEvents      = updated,
-                    filteredEvents = filtered
-                )
             }
 
             is EventsIntent.ResetState -> {
@@ -78,11 +96,37 @@ class EventsViewModel @Inject constructor(
         _state.value = _state.value.copy(isLoading = true)
 
         val events = repository.getEvents()
+        val favoriteIds = try {
+            favoritesRepository.getFavoriteIds()
+        } catch (e: Exception) {
+            emptySet()
+        }
+        val eventsWithFavorites = events.map { event ->
+            event.copy(isFavorite = favoriteIds.contains(event.id))
+        }
+
         _state.value = _state.value.copy(
             isLoading      = false,
-            allEvents      = events,
-            filteredEvents = events
+            allEvents      = eventsWithFavorites,
+            filteredEvents = eventsWithFavorites
         )
+    }
+
+        private fun filterEvents(
+            events   : List<EventModel>,
+            category : String,
+            query    : String
+        ): List<EventModel> {
+            return events.filter { event ->
+                val matchCategory = category == "Tous" || event.category == category
+                val matchQuery    = query.isEmpty() ||
+                        event.title.contains(query, ignoreCase = true) ||
+                        event.city.contains(query, ignoreCase = true)
+                matchCategory && matchQuery
+            }
+        }
+    }
+
 
         /*
         // Données simulées — à remplacer par Firebase plus tard
@@ -143,19 +187,4 @@ class EventsViewModel @Inject constructor(
             ),
         )
 */
-    }
 
-    private fun filterEvents(
-        events   : List<EventModel>,
-        category : String,
-        query    : String
-    ): List<EventModel> {
-        return events.filter { event ->
-            val matchCategory = category == "Tous" || event.category == category
-            val matchQuery    = query.isEmpty() ||
-                    event.title.contains(query, ignoreCase = true) ||
-                    event.city.contains(query, ignoreCase = true)
-            matchCategory && matchQuery
-        }
-    }
-}

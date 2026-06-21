@@ -3,6 +3,7 @@ package com.dcc.eventticketapp.data.DI
 import android.content.Context
 import com.dcc.eventticketapp.data.Database.EventDao
 import com.dcc.eventticketapp.data.Database.EventDatabase
+import com.dcc.eventticketapp.data.Database.FavoriteDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,5 +28,12 @@ object DatabaseModule {
         database: EventDatabase
     ): EventDao {
         return database.eventDao()
+    }
+
+    @Provides
+    fun provideFavoriteDao(
+        database: EventDatabase
+    ): FavoriteDao {
+        return database.favoriteDao()
     }
 }
