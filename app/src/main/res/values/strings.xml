@@ -1,6 +1,11 @@
 <resources>
     <!-- App -->
     <string name="app_name">TicketGo</string>
+
+    <string name="facebook_app_id">1580025280205558</string>
+    <string name="fb_login_protocol_scheme">fb1580025280205558</string>
+    <string name="facebook_client_token">a5ed11cfcd96919eecf9b349ba8a9c8a</string>
+
     <string name="app_tagline">Vos billets, en un clic.</string>
     <string name="app_version">Version 1.0.0</string>
 
@@ -36,6 +41,5 @@
     <string name="error_invalid_email">Adresse email invalide</string>
     <string name="error_invalid_phone">Numéro invalide (min. 10 chiffres)</string>
     <string name="error_password_mismatch">Les mots de passe ne correspondent pas</string>
-
 
 </resources>

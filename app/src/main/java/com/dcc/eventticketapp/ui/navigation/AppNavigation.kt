@@ -19,15 +19,17 @@ import com.dcc.eventticketapp.ui.events.EventsViewModel
 import com.dcc.eventticketapp.ui.events.screens.EventsScreen
 import com.dcc.eventticketapp.ui.favorites.FavoritesViewModel
 import com.dcc.eventticketapp.ui.favorites.screens.FavoritesScreen
+import com.dcc.eventticketapp.ui.ticket.TicketViewModel
+import com.dcc.eventticketapp.ui.ticket.screens.TicketScreen
+
 @Composable
 fun AppNavigation(
     authViewModel : AuthViewModel,
     homeViewModel : HomeViewModel,
     categoryViewModel : CategoryViewModel,
-    eventsViewModel : EventsViewModel,
-    favoritesViewModel : FavoritesViewModel
-
-
+    ticketViewModel    : TicketViewModel,
+    onGoogleSignIn    : () -> Unit,
+    onFacebookSignIn  : () -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -64,10 +66,13 @@ fun AppNavigation(
                 },
                 onFavoritesClick = {
                     navController.navigate("favorites")
+                },
+                onTicketsClick = {
+                    navController.navigate("tickets")
                 }
             )
         }
-        // Evenements
+        // 3- Evenements
         composable("events") {
             EventsScreen(
                 onEventClick = { eventId ->
@@ -75,7 +80,7 @@ fun AppNavigation(
                 }
             )
         }
-        // 3- Profile
+        // 4- Profile
         composable("profile") {
             ProfileScreen(
                 onNavigateBack = {
@@ -89,7 +94,7 @@ fun AppNavigation(
             )
         }
 
-        // Route favoris
+        // 5- Route favoris
         composable("favorites") {
             FavoritesScreen(
                 onEventClick = { eventId ->
@@ -101,7 +106,7 @@ fun AppNavigation(
             )
         }
 
-        // 4- Login
+        // 6- Login
         composable("login") {
             LoginScreen(
                 viewModel = authViewModel,
@@ -110,12 +115,14 @@ fun AppNavigation(
                         popUpTo("login") { inclusive = true }
                     }
                 },
+                onGoogleSignInClick = onGoogleSignIn,
+                onFacebookSignInClick = onFacebookSignIn,
                 onNavigateToRegister = { navController.navigate("register") }
             )
         }
 
 
-        // 5- Register
+        // 7- Register
         composable("register") {
             RegisterScreen(
                 viewModel = authViewModel,
@@ -128,7 +135,7 @@ fun AppNavigation(
             )
         }
 
-        // 6- détails event
+        // 8- détails event
                 composable(
                     route     = "eventDetail/{eventId}",
                     arguments = listOf(navArgument("eventId") { type = NavType.StringType })
@@ -140,6 +147,12 @@ fun AppNavigation(
                     )
                 }
 
+        // 9- réservation
+        composable("tickets") {
+            TicketScreen(
+                viewModel = ticketViewModel
+            )
+        }
 
     }
 }
