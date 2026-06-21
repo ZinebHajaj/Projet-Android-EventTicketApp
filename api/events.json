@@ -34,5 +34,14 @@
     "imageUrl": "https://picsum.photos/seed/theatre/400/300",
     "priceStandard": 80.0,
     "category": "Théâtre"
+  },
+   {
+    "id": "5",
+    "title": "atelier",
+    "city": "Rbt",
+    "date": "20 Juin 2025",
+    "imageUrl": "https://picsum.photos/seed/jazz/400/300",
+    "priceStandard": 80.0,
+    "category": "Ateliers"
   }
 ]
