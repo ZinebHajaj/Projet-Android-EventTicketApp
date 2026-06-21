@@ -11,10 +11,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dcc.eventticketapp.ui.category.CategoryIntent
+import com.dcc.eventticketapp.ui.category.CategoryViewModel
+import com.dcc.eventticketapp.ui.category.component.CategoriesRow
 import com.dcc.eventticketapp.ui.events.EventsIntent
 import com.dcc.eventticketapp.ui.events.EventsViewModel
 import com.dcc.eventticketapp.ui.events.component.EventListItem
-import com.dcc.eventticketapp.ui.events.component.EventsCategoriesFilter
 import com.dcc.eventticketapp.ui.events.component.EventsSearchBar
 import com.dcc.eventticketapp.ui.theme.OrangeMain
 
@@ -22,9 +24,11 @@ import com.dcc.eventticketapp.ui.theme.OrangeMain
 @Composable
 fun EventsScreen(
     onEventClick : (String) -> Unit,
-    viewModel    : EventsViewModel = hiltViewModel()
+    viewModel    : EventsViewModel = hiltViewModel(),
+    categoryViewModel : CategoryViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val categoryState by categoryViewModel.state.collectAsState()
 
     // Couleurs adaptatives dark/light
     val bgColor      = MaterialTheme.colorScheme.background
@@ -76,17 +80,20 @@ fun EventsScreen(
                 )
             }
 
-            // ── Filtres catégories ────────────────────────────────
             item {
-                Spacer(modifier = Modifier.height(4.dp))
-                EventsCategoriesFilter(
-                    categories       = state.categories,
-                    selectedCategory = state.selectedCategory,
-                    onCategoryClick  = {
-                        viewModel.handleIntent(EventsIntent.SelectCategory(it))
+                CategoriesRow(
+                    surfaceColor     = surfaceColor,
+                    textSecond       = textSecond,
+                    selectedCategory = categoryState.selectedCategory,
+                    onCategoryClick  = { category ->
+                        categoryViewModel.handleIntent(
+                            CategoryIntent.SelectCategory(category)
+                        )
+                        viewModel.handleIntent(
+                            EventsIntent.SelectCategory(category)
+                        )
                     }
                 )
-                Spacer(modifier = Modifier.height(8.dp))
             }
 
             // ── État loading ──────────────────────────────────────

@@ -1,5 +1,7 @@
 package com.dcc.eventticketapp.ui.auth
 
+import com.facebook.AccessToken
+
 sealed class AuthIntent {
 
     // Login
@@ -18,4 +20,18 @@ sealed class AuthIntent {
 
     // Commun
     object ResetState : AuthIntent()
+
+    //Deconnexion
+    object Logout : AuthIntent()
+
+    // Change session
+    object CheckSession : AuthIntent()
+
+    // SSO Google
+    data class GoogleSignInResult(val idToken: String) : AuthIntent()
+    object GoogleSignInError : AuthIntent()
+
+    // SSO Facebook
+    data class FacebookSignInResult(val accessToken: AccessToken) : AuthIntent()
+    object FacebookSignInError : AuthIntent()
 }

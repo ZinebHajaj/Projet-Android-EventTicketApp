@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "143574668833",
+    "project_id": "projet-android-eventticketapp",
+    "storage_bucket": "projet-android-eventticketapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:143574668833:android:cc6675f9ef197feb4bb560",
+        "android_client_info": {
+          "package_name": "com.dcc.eventticketapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "143574668833-iphcaaj1fs0egemse18u45bdj51bp6vs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dcc.eventticketapp",
+            "certificate_hash": "b4a5f27ecd27790213d4220101c6e6dd41ad911f"
+          }
+        },
+        {
+          "client_id": "143574668833-aoklca9mmdvfcr2p20a26ec71pcnisfr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC05Pe3aNnMflZ_p131S79_QKU139857Lg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "143574668833-aoklca9mmdvfcr2p20a26ec71pcnisfr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

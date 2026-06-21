@@ -3,6 +3,7 @@ package com.dcc.eventticketapp.ui.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dcc.eventticketapp.data.Repository.AuthRepository
+import com.facebook.AccessToken
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -82,6 +83,47 @@ class AuthViewModel @Inject constructor(
             is AuthIntent.ResetState -> {
                 _state.value = AuthViewState()
             }
+
+            // Logout
+            is AuthIntent.Logout -> {
+                repository.logout()
+
+                _state.value = AuthViewState()
+            }
+
+            //session
+            is AuthIntent.CheckSession -> {
+                viewModelScope.launch {
+                    checkSession()
+                }
+            }
+
+            // SSO Google
+            is AuthIntent.GoogleSignInResult -> {
+                viewModelScope.launch {
+                    submitGoogleSignIn(intent.idToken)
+                }
+            }
+
+            is AuthIntent.GoogleSignInError -> {
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    error     = "Échec de la connexion Google"
+                )
+            }
+
+            // SSO Facebook
+            is AuthIntent.FacebookSignInResult -> {
+                viewModelScope.launch { submitFacebookSignIn(intent.accessToken) }
+            }
+
+            is AuthIntent.FacebookSignInError -> {
+                _state.value = _state.value.copy(
+                    isLoading = false,
+                    error     = "Échec de la connexion Facebook"
+                )
+            }
+
         }
     }
 
@@ -125,6 +167,55 @@ class AuthViewModel @Inject constructor(
             _state.value = _state.value.copy(
                 isLoading = false,
                 error     = e.message ?: "Erreur d'inscription"
+            )
+        }
+    }
+
+    private suspend fun checkSession() {
+
+        val user = repository.getCurrentUser()
+
+        if (user != null) {
+
+            _state.value = _state.value.copy(
+                user = user,
+                isAuthenticated = true
+            )
+        }
+    }
+
+    private suspend fun submitGoogleSignIn(idToken: String) {
+        _state.value = _state.value.copy(isLoading = true, error = null)
+        try {
+            val user = repository.signInWithGoogle(idToken)
+            _state.value = _state.value.copy(
+                isLoading       = false,
+                isSuccess       = true,
+                isAuthenticated = true,
+                user            = user
+            )
+        } catch (e: Exception) {
+            _state.value = _state.value.copy(
+                isLoading = false,
+                error     = e.message ?: "Erreur Google Sign-In"
+            )
+        }
+    }
+
+    private suspend fun submitFacebookSignIn(accessToken: AccessToken) {
+        _state.value = _state.value.copy(isLoading = true, error = null)
+        try {
+            val user = repository.signInWithFacebook(accessToken)
+            _state.value = _state.value.copy(
+                isLoading       = false,
+                isSuccess       = true,
+                isAuthenticated = true,
+                user            = user
+            )
+        } catch (e: Exception) {
+            _state.value = _state.value.copy(
+                isLoading = false,
+                error     = e.message ?: "Erreur Facebook Sign-In"
             )
         }
     }

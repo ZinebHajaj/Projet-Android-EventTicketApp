@@ -27,7 +27,9 @@ fun BottomNavBar(
     surfaceColor   : Color,
     textSecond     : Color,
     onProfileClick : () -> Unit,
-    onEventsClick  : () -> Unit = {}
+    onEventsClick  : () -> Unit = {},
+    onFavoritesClick  : () -> Unit = {},
+    onTicketsClick : () -> Unit = {},
 ) {
     var selectedTab by remember { mutableStateOf(0) }
 
@@ -50,6 +52,8 @@ fun BottomNavBar(
                     selectedTab = index
                     when (index) {
                         1 -> onEventsClick()
+                        2 -> onFavoritesClick()
+                        3 -> onTicketsClick()
                         4 -> onProfileClick()
                     }
                 },

@@ -1,4 +1,4 @@
-package com.dcc.eventticketapp.ui.home.component
+package com.dcc.eventticketapp.ui.category.component
 
 
 

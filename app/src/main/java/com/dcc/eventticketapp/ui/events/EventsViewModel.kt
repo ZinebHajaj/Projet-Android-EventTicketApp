@@ -3,6 +3,7 @@ package com.dcc.eventticketapp.ui.events
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dcc.eventticketapp.data.Entities.EventModel
+import com.dcc.eventticketapp.data.Repository.EventRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -10,7 +11,9 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class EventsViewModel @Inject constructor() : ViewModel() {
+class EventsViewModel @Inject constructor(
+    private val repository: EventRepository
+) : ViewModel() {
 
     private val _state = MutableStateFlow(EventsViewState())
     val state: StateFlow<EventsViewState> = _state
@@ -74,6 +77,14 @@ class EventsViewModel @Inject constructor() : ViewModel() {
     private suspend fun loadEvents() {
         _state.value = _state.value.copy(isLoading = true)
 
+        val events = repository.getEvents()
+        _state.value = _state.value.copy(
+            isLoading      = false,
+            allEvents      = events,
+            filteredEvents = events
+        )
+
+        /*
         // Données simulées — à remplacer par Firebase plus tard
         val fakeEvents = listOf(
             EventModel(
@@ -131,12 +142,7 @@ class EventsViewModel @Inject constructor() : ViewModel() {
                 priceStandard = 50.0
             ),
         )
-
-        _state.value = _state.value.copy(
-            isLoading      = false,
-            allEvents      = fakeEvents,
-            filteredEvents = fakeEvents
-        )
+*/
     }
 
     private fun filterEvents(

@@ -35,4 +35,6 @@ object DatabaseModule {
     fun provideAppPreferencesDataStore(
         @ApplicationContext context: Context
     ): AppPreferencesDataStore = AppPreferencesDataStore(context)
+
 }
+

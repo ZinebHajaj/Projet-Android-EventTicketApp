@@ -11,6 +11,7 @@ import androidx.navigation.navArgument
 import com.dcc.eventticketapp.ui.auth.AuthViewModel
 import com.dcc.eventticketapp.ui.auth.screens.LoginScreen
 import com.dcc.eventticketapp.ui.auth.screens.RegisterScreen
+import com.dcc.eventticketapp.ui.category.CategoryViewModel
 import com.dcc.eventticketapp.ui.eventDetail.screens.EventDetailScreen
 import com.dcc.eventticketapp.ui.home.HomeViewModel
 import com.dcc.eventticketapp.ui.home.screens.HomeScreen
@@ -20,6 +21,7 @@ import com.dcc.eventticketapp.ui.events.EventsViewModel
 import com.dcc.eventticketapp.ui.events.screens.EventsScreen
 import com.dcc.eventticketapp.ui.favorites.FavoritesViewModel
 import com.dcc.eventticketapp.ui.favorites.screens.FavoritesScreen
+
 import com.dcc.eventticketapp.ui.profile.ProfileDestination
 import com.dcc.eventticketapp.ui.profile.screens.AboutScreen
 import com.dcc.eventticketapp.ui.profile.screens.HelpScreen
@@ -27,6 +29,9 @@ import com.dcc.eventticketapp.ui.profile.screens.PersonalInfoScreen
 import com.dcc.eventticketapp.ui.profile.screens.PrivacyScreen
 import com.dcc.eventticketapp.ui.profile.screens.ReservationsScreen
 import com.dcc.eventticketapp.ui.theme.AppPreferencesViewModel
+import com.dcc.eventticketapp.ui.ticket.TicketViewModel
+import com.dcc.eventticketapp.ui.ticket.screens.TicketScreen
+
 
 @Composable
 fun AppNavigation(
@@ -35,9 +40,10 @@ fun AppNavigation(
     categoryViewModel : CategoryViewModel,
     eventsViewModel : EventsViewModel,
     favoritesViewModel : FavoritesViewModel,
-    prefsViewModel     : AppPreferencesViewModel
-
-
+    prefsViewModel     : AppPreferencesViewModel,
+    ticketViewModel    : TicketViewModel,
+    onGoogleSignIn    : () -> Unit,
+    onFacebookSignIn  : () -> Unit
 ) {
     val navController = rememberNavController()
 
@@ -62,6 +68,7 @@ fun AppNavigation(
         composable("home") {
             HomeScreen(
                 viewModel      = homeViewModel,
+                categoryViewModel = categoryViewModel,
                 onEventClick   = { eventId ->
                     navController.navigate("eventDetail/$eventId")
                 },
@@ -70,10 +77,16 @@ fun AppNavigation(
                 },
                 onEventsClick  = {
                     navController.navigate("events")
+                },
+                onFavoritesClick = {
+                    navController.navigate("favorites")
+                },
+                onTicketsClick = {
+                    navController.navigate("tickets")
                 }
             )
         }
-        // Evenements
+        // 3- Evenements
         composable("events") {
             EventsScreen(
                 onEventClick = { eventId ->
@@ -81,7 +94,7 @@ fun AppNavigation(
                 }
             )
         }
-        // 3- Profile
+        // 4- Profile
         composable("profile") {
 
             ProfileScreen(
@@ -151,8 +164,19 @@ fun AppNavigation(
             )
         }
 
+        // 5- Route favoris
+        composable("favorites") {
+            FavoritesScreen(
+                onEventClick = { eventId ->
+                    navController.navigate("eventDetail/$eventId")
+                },
+                onExplore = {
+                    navController.navigate("events")
+                }
+            )
+        }
 
-        // 4- Login
+        // 6- Login
         composable("login") {
             LoginScreen(
                 viewModel = authViewModel,
@@ -161,12 +185,14 @@ fun AppNavigation(
                         popUpTo("login") { inclusive = true }
                     }
                 },
+                onGoogleSignInClick = onGoogleSignIn,
+                onFacebookSignInClick = onFacebookSignIn,
                 onNavigateToRegister = { navController.navigate("register") }
             )
         }
 
 
-        // 5- Register
+        // 7- Register
         composable("register") {
             RegisterScreen(
                 viewModel = authViewModel,
@@ -179,7 +205,7 @@ fun AppNavigation(
             )
         }
 
-        // 6- détails event
+        // 8- détails event
                 composable(
                     route     = "eventDetail/{eventId}",
                     arguments = listOf(navArgument("eventId") { type = NavType.StringType })
@@ -191,6 +217,12 @@ fun AppNavigation(
                     )
                 }
 
+        // 9- réservation
+        composable("tickets") {
+            TicketScreen(
+                viewModel = ticketViewModel
+            )
+        }
 
     }
 

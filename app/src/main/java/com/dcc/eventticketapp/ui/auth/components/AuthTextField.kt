@@ -8,6 +8,7 @@ import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -108,8 +109,10 @@ fun AuthTextField(
             unfocusedLeadingIconColor = TextGrayMode,
             errorBorderColor          = ErrorLight,
             errorLabelColor           = ErrorLight,
-            focusedContainerColor     = Color.White,
-            unfocusedContainerColor   = Color.White,
+            //focusedContainerColor     = Color.White,
+            //unfocusedContainerColor   = Color.White,
+            focusedContainerColor   = MaterialTheme.colorScheme.surface,
+            unfocusedContainerColor = MaterialTheme.colorScheme.surface,
         )
     )
 }

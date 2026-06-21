@@ -40,6 +40,7 @@ fun ProfileScreen(
 ) {
     val state by viewModel.state.collectAsState()
 
+
     // Observer la navigation
     LaunchedEffect(state.navigateTo) {
         state.navigateTo?.let { dest ->
@@ -354,11 +355,14 @@ fun ProfileScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
                     OutlinedTextField(
-                        value         = state.editEmail,
-                        onValueChange = {
-                            viewModel.handleIntent(ProfileIntent.EmailChanged(it))
-                        },
+                        value = state.editEmail,
+                        onValueChange = {},
+                        readOnly = true,
+                        enabled = false,
                         label      = { Text("Email") },
+                        supportingText = {
+                            Text("L'adresse email ne peut pas être modifiée")
+                        },
                         singleLine = true,
                         shape      = RoundedCornerShape(12.dp),
                         colors     = OutlinedTextFieldDefaults.colors(
