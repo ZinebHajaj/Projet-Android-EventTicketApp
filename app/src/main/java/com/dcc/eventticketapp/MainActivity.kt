@@ -117,11 +117,41 @@ class MainActivity : ComponentActivity() {
         super.onActivityResult(requestCode, resultCode, data)
     }
 
+
     private val prefsViewModel     : AppPreferencesViewModel by viewModels()
+
+    private fun initializeEventCounters() {
+        // Tous les événements de ton events.json
+        val events = listOf("1", "2", "3", "4", "5")
+
+        val tiers = mapOf(
+            "vip" to 50,
+            "standard" to 200,
+            "economy" to 300
+        )
+
+        events.forEach { eventId ->
+            tiers.forEach { (tierId, totalSeats) ->
+                com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    .collection("events")
+                    .document(eventId)
+                    .collection("seatTiers")
+                    .document(tierId)
+                    .set(mapOf(
+                        "totalSeats" to totalSeats,
+                        "bookedSeats" to 0
+                    ))
+            }
+        }
+    }
+
 
     // Corps
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        initializeEventCounters()
+
         enableEdgeToEdge()
 
         setContent {

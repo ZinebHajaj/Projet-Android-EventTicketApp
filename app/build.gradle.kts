@@ -125,7 +125,15 @@ dependencies {
     // Facebook SDK
     implementation("com.facebook.android:facebook-android-sdk:latest.release")
 
+
     // AppCompat pour la gestion des langues
     implementation("androidx.appcompat:appcompat:1.7.0")
+
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    // Stripe
+    implementation("com.stripe:stripe-android:21.2.0")
+
 
 }

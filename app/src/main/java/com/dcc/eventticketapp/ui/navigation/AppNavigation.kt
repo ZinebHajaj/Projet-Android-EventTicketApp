@@ -3,6 +3,8 @@ package com.dcc.eventticketapp.ui.navigation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -11,6 +13,12 @@ import androidx.navigation.navArgument
 import com.dcc.eventticketapp.ui.auth.AuthViewModel
 import com.dcc.eventticketapp.ui.auth.screens.LoginScreen
 import com.dcc.eventticketapp.ui.auth.screens.RegisterScreen
+import com.dcc.eventticketapp.ui.booking.BookingViewModel
+import com.dcc.eventticketapp.ui.booking.screens.BookingScreen
+import com.dcc.eventticketapp.ui.booking.screens.ConfirmationScreen
+import com.dcc.eventticketapp.ui.booking.screens.PayPalWebViewScreen
+import com.dcc.eventticketapp.ui.booking.screens.PaymentMethodScreen
+import com.dcc.eventticketapp.ui.booking.screens.PaymentScreen
 import com.dcc.eventticketapp.ui.category.CategoryViewModel
 import com.dcc.eventticketapp.ui.eventDetail.screens.EventDetailScreen
 import com.dcc.eventticketapp.ui.home.HomeViewModel
@@ -67,15 +75,15 @@ fun AppNavigation(
         // 2- Home
         composable("home") {
             HomeScreen(
-                viewModel      = homeViewModel,
+                viewModel = homeViewModel,
                 categoryViewModel = categoryViewModel,
-                onEventClick   = { eventId ->
+                onEventClick = { eventId ->
                     navController.navigate("eventDetail/$eventId")
                 },
                 onProfileClick = {
                     navController.navigate("profile")
                 },
-                onEventsClick  = {
+                onEventsClick = {
                     navController.navigate("events")
                 },
                 onFavoritesClick = {
@@ -163,7 +171,7 @@ fun AppNavigation(
             )
         }
 
-        // 5- Route favoris
+        // 5- Favoris
         composable("favorites") {
             FavoritesScreen(
                 onEventClick = { eventId ->
@@ -205,24 +213,113 @@ fun AppNavigation(
         }
 
         // 8- détails event
-                composable(
-                    route     = "eventDetail/{eventId}",
-                    arguments = listOf(navArgument("eventId") { type = NavType.StringType })
-                ) { backStackEntry ->
-                    val eventId = backStackEntry.arguments?.getString("eventId") ?: ""
-                    EventDetailScreen(
-                        eventId = eventId,
-                        onBack  = { navController.popBackStack() }
-                    )
+        composable(
+            route = "eventDetail/{eventId}",
+            arguments = listOf(navArgument("eventId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val eventId = backStackEntry.arguments?.getString("eventId") ?: ""
+            EventDetailScreen(
+                eventId = eventId,
+                onBack = { navController.popBackStack() },
+                onNavigateToBooking = { id ->
+                    navController.navigate("booking/$id")
                 }
+            )
+        }
 
-        // 9- réservation
+        // 9- Tickets
         composable("tickets") {
             TicketScreen(
                 viewModel = ticketViewModel
             )
         }
 
+        // 10- Booking
+        composable(
+            route     = "booking/{eventId}",
+            arguments = listOf(navArgument("eventId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val eventId = backStackEntry.arguments?.getString("eventId") ?: ""
+            val bookingViewModel: BookingViewModel = hiltViewModel()
+
+            BookingScreen(
+                eventId   = eventId,
+                viewModel = bookingViewModel,
+                onBack    = { navController.popBackStack() },
+                onProceed = { navController.navigate("paymentMethod") }
+            )
+        }
+
+        composable("paymentMethod") {
+            val parentEntry = remember(it) {
+                navController.getBackStackEntry("booking/{eventId}")
+            }
+            val bookingViewModel: BookingViewModel = hiltViewModel(parentEntry)
+
+            PaymentMethodScreen(
+                viewModel  = bookingViewModel,
+                onBack     = { navController.popBackStack() },
+                onContinue = { navController.navigate("payment") },
+                onExpired  = {
+                    navController.navigate("home") { popUpTo("home") { inclusive = true } }
+                }
+            )
+        }
+
+        composable("payment") {
+            val parentEntry = remember(it) {
+                navController.getBackStackEntry("booking/{eventId}")
+            }
+            val bookingViewModel: BookingViewModel = hiltViewModel(parentEntry)
+
+            PaymentScreen(
+                viewModel        = bookingViewModel,
+                onBack           = { navController.popBackStack() },
+                onPaymentSuccess = { navController.navigate("confirmation") },
+                onPayPalClick    = { navController.navigate("paypalWebView") }
+            )
+        }
+
+        // PayPal WebView
+        composable("paypalWebView") {
+            val parentEntry = remember(it) {
+                navController.getBackStackEntry("booking/{eventId}")
+            }
+            val bookingViewModel: BookingViewModel = hiltViewModel(parentEntry)
+            val state by bookingViewModel.state.collectAsState()
+
+            PayPalWebViewScreen(
+                orderId   = state.payPalOrderId,
+                clientId  = "AX2a5PCwd-BoHbIzU4tuEDH_hWmksGmux0cba2S5ZNR74uiBtNSFR7m-Y9WegyroEXCll5bbootkdo66",
+                amount    = state.totalPrice * 0.092,
+                onSuccess = { payerId ->
+                    bookingViewModel.capturePayPalOrder(state.payPalOrderId)
+                    navController.navigate("confirmation") {
+                        popUpTo("paypalWebView") { inclusive = true }
+                    }
+                },
+                onCancel  = { navController.popBackStack() },
+                onBack    = { navController.popBackStack() }
+            )
+        }
+
+
+        composable("confirmation") {
+            val parentEntry = remember(it) {
+                navController.getBackStackEntry("booking/{eventId}")
+            }
+            val bookingViewModel: BookingViewModel = hiltViewModel(parentEntry)
+
+            ConfirmationScreen(
+                viewModel = bookingViewModel,
+                onGoToTickets = {
+                    navController.navigate("tickets") { popUpTo("home") { inclusive = false } }
+                },
+                onGoHome = {
+                    navController.navigate("home") { popUpTo("home") { inclusive = true } }
+                }
+            )
+        }
     }
 
 }

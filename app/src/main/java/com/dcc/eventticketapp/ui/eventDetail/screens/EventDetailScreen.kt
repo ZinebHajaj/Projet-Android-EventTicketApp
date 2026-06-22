@@ -31,6 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 fun EventDetailScreen(
     eventId   : String,
     onBack    : () -> Unit,
+    onNavigateToBooking : (String) -> Unit,
     viewModel : EventDetailViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -105,7 +106,7 @@ fun EventDetailScreen(
                     BookingButton(
                         isBooked = state.isBooked,
                         onClick  = {
-                            viewModel.handleIntent(EventDetailIntent.BookEvent)
+                            onNavigateToBooking(eventId)
                         }
                     )
                 }

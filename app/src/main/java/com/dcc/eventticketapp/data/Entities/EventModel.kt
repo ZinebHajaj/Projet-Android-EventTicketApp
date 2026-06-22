@@ -30,4 +30,8 @@ data class EventModel(
     val category: String = "Concerts",
 
     val isFavorite: Boolean = false
-)
+){
+    // Détermine si cet événement nécessite une sélection de sièges
+    val requiresSeatSelection: Boolean
+        get() = category in listOf("Concerts", "Sports", "Théâtre")
+}

@@ -96,10 +96,13 @@ fun TicketCard(
                 verticalAlignment     = Alignment.CenterVertically
             ) {
                 Text(
-                    text       = "${ticket.price.toInt()} MAD",
-                    fontSize   = 16.sp,
+                    text = com.dcc.eventticketapp.utils.CurrencyConverter.formatPrice(
+                        ticket.price,
+                        ticket.currency
+                    ),
+                    fontSize = 16.sp,
                     fontWeight = FontWeight.Bold,
-                    color      = OrangeMain
+                    color = OrangeMain
                 )
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
@@ -114,7 +117,7 @@ fun TicketCard(
                     ) {
                         Text(
                             text = when (ticket.status) {
-                                TicketStatus.VALID   -> "✓ Valide"
+                                TicketStatus.VALID   -> "Valide"
                                 TicketStatus.USED    -> "Utilisé"
                                 TicketStatus.EXPIRED -> "Expiré"
                             },
