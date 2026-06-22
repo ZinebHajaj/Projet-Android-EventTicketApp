@@ -1,4 +1,4 @@
-package com.dcc.eventticketapp.data.Preferences
+package com.dcc.eventticketapp.data.preferences
 
 import android.content.Context
 import androidx.datastore.preferences.core.edit

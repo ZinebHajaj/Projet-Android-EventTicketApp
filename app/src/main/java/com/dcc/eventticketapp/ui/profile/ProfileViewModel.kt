@@ -42,7 +42,8 @@ class ProfileViewModel @Inject constructor(
                     } catch (e: Exception) { 0 }
                     // Tickets (mockés pour l'instant)
                     val reservationsCount = try {
-                        ticketRepository.getTickets().size
+                        val userId = authRepository.currentUserId() ?: ""
+                        ticketRepository.getTickets(userId).size
                     } catch (e: Exception) { 0 }
 
                     _state.value = _state.value.copy(
