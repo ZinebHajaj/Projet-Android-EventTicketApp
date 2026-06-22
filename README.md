@@ -1,4 +1,4 @@
-<img width="1878" height="757" alt="image" src="https://github.com/user-attachments/assets/c0a7603c-007e-47c5-8ae3-bef6f8bb8ab0" />Je vais créer un fichier README.md complet pour ton projet **EventTicketApp** basé sur tout ce qu'on a développé ensemble. Voici le contenu :
+<img width="1878" height="757" alt="image" src="https://github.com/user-attachments/assets/c0a7603c-007e-47c5-8ae3-bef6f8bb8ab0" />
 
 ---
 
