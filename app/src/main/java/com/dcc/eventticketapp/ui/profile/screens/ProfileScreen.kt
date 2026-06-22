@@ -30,16 +30,11 @@ fun ProfileScreen(
     onNavigateTo   : (ProfileDestination) -> Unit = {},
     // ── Préférences globales (depuis AppPreferencesViewModel / DataStore) ──
     isDarkMode            : Boolean          = false,
-    notificationsEnabled  : Boolean          = true,
-    currentLanguage       : String           = "fr",
     onToggleDarkMode      : () -> Unit        = {},
-    onToggleNotifications : () -> Unit        = {},
-    onLanguageChange      : (String) -> Unit  = {},
 
     viewModel      : ProfileViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
-
 
     // Observer la navigation
     LaunchedEffect(state.navigateTo) {
@@ -127,18 +122,6 @@ fun ProfileScreen(
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
-            // ── Stats ─────────────────────────────────────────────
-            item {
-                StatsSection(
-                    reservationsCount = state.reservationsCount,
-                    favoritesCount    = state.favoritesCount,
-                    eventsCount       = state.eventsCount,
-                    surfaceColor      = surfaceColor,
-                    textSecond        = textSecond
-                )
-                Spacer(modifier = Modifier.height(24.dp))
-            }
-
             // ── Mon Compte ────────────────────────────────────────
             item {
                 MenuSection(
@@ -150,7 +133,7 @@ fun ProfileScreen(
                         ProfileMenuItem(
                             icon     = Icons.Outlined.Person,
                             label    = "Informations personnelles",
-                            subtitle = state.user?.phone ?: "Téléphone non défini",
+                            subtitle = "Nom, email, téléphone",
                             onClick  = {   // ← ajouter
                                 viewModel.handleIntent(
                                     ProfileIntent.NavigateTo(ProfileDestination.PersonalInfo)
@@ -177,11 +160,6 @@ fun ProfileScreen(
                                 )
                             }
                         ),
-                        ProfileMenuItem(
-                            icon     = Icons.Outlined.CreditCard,
-                            label    = "Moyens de paiement",
-                            subtitle = "Cartes et portefeuille"
-                        ),
                     )
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -195,19 +173,6 @@ fun ProfileScreen(
                     textPrimary  = textPrimary,
                     textSecond   = textSecond,
                     items = listOf(
-                        ProfileMenuItem(
-                            icon      = Icons.Outlined.Notifications,
-                            label     = "Notifications",
-                            subtitle  = if (state.notificationsEnabled) "Activées" else "Désactivées",
-                            hasToggle = true,
-                            isToggled = state.notificationsEnabled,
-                            onToggle  = onToggleNotifications
-                        ),
-                        ProfileMenuItem(
-                            icon     = Icons.Outlined.Language,
-                            label    = "Langue",
-                            subtitle = if (currentLanguage == "fr") "Français" else "English"
-                        ),
                         ProfileMenuItem(
                             icon      = if (isDarkMode) Icons.Outlined.LightMode
                             else Icons.Outlined.DarkMode,

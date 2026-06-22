@@ -125,5 +125,7 @@ dependencies {
     // Facebook SDK
     implementation("com.facebook.android:facebook-android-sdk:latest.release")
 
+    // AppCompat pour la gestion des langues
+    implementation("androidx.appcompat:appcompat:1.7.0")
 
 }

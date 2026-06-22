@@ -29,6 +29,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.core.os.LocaleListCompat
+import com.dcc.eventticketapp.utils.applyLocale
+
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -111,15 +119,14 @@ class MainActivity : ComponentActivity() {
 
     private val prefsViewModel     : AppPreferencesViewModel by viewModels()
 
-
-
     // Corps
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
         setContent {
-            val prefsState by prefsViewModel.state.collectAsState()  // ← ajouter
-            EventTicketAppTheme (darkTheme = prefsState.isDarkMode) {
+            val prefsState by prefsViewModel.state.collectAsState()
+                EventTicketAppTheme (darkTheme = prefsState.isDarkMode) {
                 AppNavigation(
 
                     authViewModel = authViewModel,
@@ -131,9 +138,9 @@ class MainActivity : ComponentActivity() {
                     ticketViewModel   = ticketViewModel,
                     onGoogleSignIn    = { launchGoogleSignIn() },
                     onFacebookSignIn  = { launchFacebookSignIn() }
-
                 )
             }
         }
     }
+
 }

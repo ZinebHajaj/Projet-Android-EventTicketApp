@@ -124,11 +124,10 @@ fun AppNavigation(
                 },
                 // ── Préférences depuis DataStore ──────────────────────
                 isDarkMode            = prefsState.isDarkMode,
-                notificationsEnabled  = prefsState.notificationsEnabled,
-                currentLanguage       = prefsState.language,
+                /*notificationsEnabled  = prefsState.notificationsEnabled,
+                currentLanguage       = prefsState.language,*/
                 onToggleDarkMode      = { prefsViewModel.toggleDarkMode() },
-                onToggleNotifications = { prefsViewModel.toggleNotifications() },
-                onLanguageChange      = { lang -> prefsViewModel.setLanguage(lang) }
+                /*onToggleNotifications = { prefsViewModel.toggleNotifications() },*/
 
             )
         }
