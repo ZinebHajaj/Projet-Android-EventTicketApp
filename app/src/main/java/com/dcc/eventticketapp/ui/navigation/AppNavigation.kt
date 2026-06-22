@@ -26,6 +26,13 @@ import com.dcc.eventticketapp.ui.eventDetail.screens.EventDetailScreen
 import com.dcc.eventticketapp.ui.home.HomeViewModel
 import com.dcc.eventticketapp.ui.home.screens.HomeScreen
 import com.dcc.eventticketapp.ui.profile.screens.ProfileScreen
+import com.dcc.eventticketapp.ui.profile.ProfileDestination
+import com.dcc.eventticketapp.ui.profile.screens.AboutScreen
+import com.dcc.eventticketapp.ui.profile.screens.HelpScreen
+import com.dcc.eventticketapp.ui.profile.screens.PersonalInfoScreen
+import com.dcc.eventticketapp.ui.profile.screens.PrivacyScreen
+import com.dcc.eventticketapp.ui.profile.screens.ReservationsScreen
+import com.dcc.eventticketapp.ui.theme.AppPreferencesViewModel
 import com.dcc.eventticketapp.ui.splash.SplashScreen
 import com.dcc.eventticketapp.ui.events.EventsViewModel
 import com.dcc.eventticketapp.ui.events.screens.EventsScreen
@@ -44,12 +51,16 @@ fun AppNavigation(
     authViewModel : AuthViewModel,
     homeViewModel : HomeViewModel,
     categoryViewModel : CategoryViewModel,
+    eventsViewModel : EventsViewModel,
+    favoritesViewModel : FavoritesViewModel,
+    prefsViewModel     : AppPreferencesViewModel,
     ticketViewModel    : TicketViewModel,
     onGoogleSignIn    : () -> Unit,
     onFacebookSignIn  : () -> Unit
 ) {
     val navController = rememberNavController()
 
+    val prefsState by prefsViewModel.state.collectAsState()
 
     NavHost(
         navController = navController,
@@ -66,10 +77,14 @@ fun AppNavigation(
 
             SplashScreen(
                 onSplashFinished = {
-                    // TOUJOURS aller vers home après splash
-                    // L'organisateur se connectera via login s'il veut
-                    navController.navigate("home") {
-                        popUpTo("splash") { inclusive = true }
+                    if (authState.isAuthenticated && authState.userRole == "organisateur") {
+                        navController.navigate("organizerHome") {
+                            popUpTo("splash") { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate("home") {
+                            popUpTo("splash") { inclusive = true }
+                        }
                     }
                 }
             )
@@ -115,7 +130,57 @@ fun AppNavigation(
                     navController.navigate("login") {
                         popUpTo("home") { inclusive = true }
                     }
-                }
+                },
+                onNavigateTo = { destination ->
+                    when (destination) {
+                        is ProfileDestination.PersonalInfo ->
+                            navController.navigate("profile/personal_info")
+                        is ProfileDestination.Reservations ->
+                            navController.navigate("profile/reservations")
+                        is ProfileDestination.Favorites ->
+                            navController.navigate("favorites")
+                        is ProfileDestination.Help ->
+                            navController.navigate("profile/help")
+                        is ProfileDestination.Privacy ->
+                            navController.navigate("profile/privacy")
+                        is ProfileDestination.About ->
+                            navController.navigate("profile/about")
+                    }
+                },
+                isDarkMode = prefsState.isDarkMode,
+                onToggleDarkMode = { prefsViewModel.toggleDarkMode() },
+            )
+        }
+
+        // ── Sous-routes Profile ──
+        composable("profile/personal_info") {
+            PersonalInfoScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("profile/reservations") {
+            ReservationsScreen(
+                onBack = { navController.popBackStack() },
+                onExplore = { navController.navigate("events") }
+            )
+        }
+
+        composable("profile/help") {
+            HelpScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("profile/privacy") {
+            PrivacyScreen(
+                onBack = { navController.popBackStack() }
+            )
+        }
+
+        composable("profile/about") {
+            AboutScreen(
+                onBack = { navController.popBackStack() }
             )
         }
 
@@ -157,35 +222,10 @@ fun AppNavigation(
                             popUpTo("login") { inclusive = true }
                         }
                     }
-                    // Réinitialiser APRÈS la navigation
                     authViewModel.handleIntent(AuthIntent.ResetSuccess)
                 }
             }
         }
-
-        /*
-        composable("login") {
-            LoginScreen(
-                viewModel = authViewModel,
-                onLoginSuccess = {
-                    // Vérifier le rôle après connexion
-                    val role = authViewModel.state.value.userRole
-                    if (role == "organisateur") {
-                        navController.navigate("organizerHome") {
-                            popUpTo("login") { inclusive = true }
-                        }
-                    } else {
-                        navController.navigate("home") {
-                            popUpTo("login") { inclusive = true }
-                        }
-                    }
-                },
-                onGoogleSignInClick = onGoogleSignIn,
-                onFacebookSignInClick = onFacebookSignIn,
-                onNavigateToRegister = { navController.navigate("register") }
-            )
-        }
-        */
 
         // 7- Register
         composable("register") {
@@ -224,16 +264,16 @@ fun AppNavigation(
 
         // 10- Booking
         composable(
-            route     = "booking/{eventId}",
+            route = "booking/{eventId}",
             arguments = listOf(navArgument("eventId") { type = NavType.StringType })
         ) { backStackEntry ->
             val eventId = backStackEntry.arguments?.getString("eventId") ?: ""
             val bookingViewModel: BookingViewModel = hiltViewModel()
 
             BookingScreen(
-                eventId   = eventId,
+                eventId = eventId,
                 viewModel = bookingViewModel,
-                onBack    = { navController.popBackStack() },
+                onBack = { navController.popBackStack() },
                 onProceed = { navController.navigate("paymentMethod") }
             )
         }
@@ -245,10 +285,10 @@ fun AppNavigation(
             val bookingViewModel: BookingViewModel = hiltViewModel(parentEntry)
 
             PaymentMethodScreen(
-                viewModel  = bookingViewModel,
-                onBack     = { navController.popBackStack() },
+                viewModel = bookingViewModel,
+                onBack = { navController.popBackStack() },
                 onContinue = { navController.navigate("payment") },
-                onExpired  = {
+                onExpired = {
                     navController.navigate("home") { popUpTo("home") { inclusive = true } }
                 }
             )
@@ -261,10 +301,10 @@ fun AppNavigation(
             val bookingViewModel: BookingViewModel = hiltViewModel(parentEntry)
 
             PaymentScreen(
-                viewModel        = bookingViewModel,
-                onBack           = { navController.popBackStack() },
+                viewModel = bookingViewModel,
+                onBack = { navController.popBackStack() },
                 onPaymentSuccess = { navController.navigate("confirmation") },
-                onPayPalClick    = { navController.navigate("paypalWebView") }
+                onPayPalClick = { navController.navigate("paypalWebView") }
             )
         }
 
@@ -277,20 +317,19 @@ fun AppNavigation(
             val state by bookingViewModel.state.collectAsState()
 
             PayPalWebViewScreen(
-                orderId   = state.payPalOrderId,
-                clientId  = "AX2a5PCwd-BoHbIzU4tuEDH_hWmksGmux0cba2S5ZNR74uiBtNSFR7m-Y9WegyroEXCll5bbootkdo66",
-                amount    = state.totalPrice * 0.092,
+                orderId = state.payPalOrderId,
+                clientId = "AX2a5PCwd-BoHbIzU4tuEDH_hWmksGmux0cba2S5ZNR74uiBtNSFR7m-Y9WegyroEXCll5bbootkdo66",
+                amount = state.totalPrice * 0.092,
                 onSuccess = { payerId ->
                     bookingViewModel.capturePayPalOrder(state.payPalOrderId)
                     navController.navigate("confirmation") {
                         popUpTo("paypalWebView") { inclusive = true }
                     }
                 },
-                onCancel  = { navController.popBackStack() },
-                onBack    = { navController.popBackStack() }
+                onCancel = { navController.popBackStack() },
+                onBack = { navController.popBackStack() }
             )
         }
-
 
         composable("confirmation") {
             val parentEntry = remember(it) {
@@ -308,7 +347,6 @@ fun AppNavigation(
                 }
             )
         }
-
 
         // 11- les routes organisateur :
         composable("organizerHome") {
@@ -378,7 +416,5 @@ fun AppNavigation(
                 }
             }
         }
-
     }
-
 }

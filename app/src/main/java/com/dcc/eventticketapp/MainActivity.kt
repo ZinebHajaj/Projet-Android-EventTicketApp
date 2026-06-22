@@ -8,12 +8,18 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import com.dcc.eventticketapp.ui.favorites.FavoritesViewModel
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import com.dcc.eventticketapp.ui.auth.AuthIntent
 import com.dcc.eventticketapp.ui.auth.AuthViewModel
 import com.dcc.eventticketapp.ui.category.CategoryViewModel
+import com.dcc.eventticketapp.ui.events.EventsViewModel
 import com.dcc.eventticketapp.ui.home.HomeViewModel
-import com.dcc.eventticketapp.ui.theme.EventTicketAppTheme
 import com.dcc.eventticketapp.ui.navigation.AppNavigation
+import com.dcc.eventticketapp.ui.theme.AppPreferencesViewModel
+import com.dcc.eventticketapp.ui.theme.EventTicketAppTheme
+import com.dcc.eventticketapp.ui.theme.ThemeViewModel
 import com.dcc.eventticketapp.ui.ticket.TicketViewModel
 import com.facebook.CallbackManager
 import com.facebook.FacebookCallback
@@ -24,13 +30,23 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import dagger.hilt.android.AndroidEntryPoint
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.core.os.LocaleListCompat
+import com.dcc.eventticketapp.utils.applyLocale
+
+
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-
-    private val authViewModel  : AuthViewModel  by viewModels()
-    private val homeViewModel  : HomeViewModel  by viewModels()
+    private val authViewModel : AuthViewModel by viewModels()
+    private val homeViewModel : HomeViewModel by viewModels()
     private val categoryViewModel : CategoryViewModel by viewModels()
+    private val eventsViewModel : EventsViewModel by viewModels()
+
+    private val favoritesViewModel: FavoritesViewModel by viewModels()
     private val ticketViewModel: TicketViewModel by viewModels()
 
     /* ----------- Google Sign-In ----------- */
@@ -103,6 +119,8 @@ class MainActivity : ComponentActivity() {
     }
 
 
+    private val prefsViewModel     : AppPreferencesViewModel by viewModels()
+
     private fun initializeEventCounters() {
         // Tous les événements de ton events.json
         val events = listOf("1", "2", "3", "4", "5")
@@ -165,12 +183,18 @@ class MainActivity : ComponentActivity() {
         //initializeOrganizerAccount()
 
         enableEdgeToEdge()
+
         setContent {
-            EventTicketAppTheme {
+            val prefsState by prefsViewModel.state.collectAsState()
+                EventTicketAppTheme (darkTheme = prefsState.isDarkMode) {
                 AppNavigation(
-                    authViewModel     = authViewModel,
-                    homeViewModel     = homeViewModel,
+
+                    authViewModel = authViewModel,
+                    homeViewModel = homeViewModel,
                     categoryViewModel = categoryViewModel,
+                    eventsViewModel = eventsViewModel,
+                    favoritesViewModel = favoritesViewModel,
+                    prefsViewModel     = prefsViewModel,
                     ticketViewModel   = ticketViewModel,
                     onGoogleSignIn    = { launchGoogleSignIn() },
                     onFacebookSignIn  = { launchFacebookSignIn() }
@@ -178,4 +202,5 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dcc.eventticketapp.data.Entities.TicketModel
 import com.dcc.eventticketapp.data.Entities.TicketStatus
-import com.dcc.eventticketapp.data.Preferences.CurrencyPreference
+import com.dcc.eventticketapp.data.preferences.CurrencyPreference
 import com.dcc.eventticketapp.data.Repository.AuthRepository
 import com.dcc.eventticketapp.data.Repository.EventRepository
 import com.dcc.eventticketapp.data.Repository.PayPalRepository

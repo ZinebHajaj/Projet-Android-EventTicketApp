@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dcc.eventticketapp.data.Entities.User
 import com.dcc.eventticketapp.data.Repository.AuthRepository
+import com.dcc.eventticketapp.data.Repository.FavoritesRepository
+import com.dcc.eventticketapp.data.Repository.TicketRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -12,7 +14,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val authRepository: AuthRepository
+    private val authRepository: AuthRepository,
+    private val favoritesRepository: FavoritesRepository,
+    private val ticketRepository  : TicketRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(ProfileViewState())
@@ -26,22 +30,36 @@ class ProfileViewModel @Inject constructor(
             is ProfileIntent.LoadProfile -> {
                 viewModelScope.launch {
 
-                    _state.value = _state.value.copy(
-                        isLoading = true
-                    )
+                    if (_state.value.user != null) return@launch
+
+                    _state.value = _state.value.copy(isLoading = true)
+
 
                     val user = authRepository.getCurrentUser()
+                    // Favoris réels depuis Firestore
+                    val favoritesCount = try {
+                        favoritesRepository.getFavorites().size
+                    } catch (e: Exception) { 0 }
+                    // Tickets (mockés pour l'instant)
+                    val reservationsCount = try {
+                        val userId = authRepository.currentUserId() ?: ""
+                        ticketRepository.getTickets(userId).size
+                    } catch (e: Exception) { 0 }
 
                     _state.value = _state.value.copy(
                         isLoading = false,
                         user = user,
                         isAuthenticated = user != null,
-
                         editName = user?.fullName ?: "",
                         editEmail = user?.email ?: "",
-                        editPhone = user?.phone ?: ""
+                        editPhone = user?.phone ?: "",
+                        favoritesCount = favoritesCount,
+                        reservationsCount = reservationsCount
                     )
                 }
+            }
+            is ProfileIntent.NavigateTo -> {
+                _state.value = _state.value.copy(navigateTo = intent.destination)
             }
 
             // Champs édition
@@ -53,6 +71,10 @@ class ProfileViewModel @Inject constructor(
             }
             is ProfileIntent.PhoneChanged -> {
                 _state.value = _state.value.copy(editPhone = intent.phone)
+            }
+            // Nouvelle photo de profil sélectionnée
+            is ProfileIntent.PhotoChanged -> {
+                _state.value = _state.value.copy(photoUri = intent.uri)
             }
 
             // Sauvegarder les modifications
@@ -137,5 +159,9 @@ class ProfileViewModel @Inject constructor(
 
     fun hideLogoutDialog() {
         _state.value = _state.value.copy(showLogoutDialog = false)
+    }
+
+    fun clearNavigation() {
+        _state.value = _state.value.copy(navigateTo = null)
     }
 }

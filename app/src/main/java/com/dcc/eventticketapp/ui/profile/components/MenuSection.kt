@@ -24,7 +24,8 @@ data class ProfileMenuItem(
     val subtitle  : String     = "",
     val hasToggle : Boolean    = false,
     val isToggled : Boolean    = false,
-    val onToggle  : () -> Unit = {}
+    val onToggle  : () -> Unit = {},
+    val onClick   : () -> Unit = {}
 )
 
 @Composable
@@ -76,7 +77,9 @@ fun MenuItemRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable(enabled = !item.hasToggle) { }
+            .clickable(enabled = !item.hasToggle) {
+                item.onClick()
+            }
             .padding(horizontal = 16.dp, vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

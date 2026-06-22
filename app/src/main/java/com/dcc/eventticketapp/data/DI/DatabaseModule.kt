@@ -6,6 +6,8 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.dcc.eventticketapp.data.Database.EventDao
 import com.dcc.eventticketapp.data.Database.EventDatabase
+import com.dcc.eventticketapp.data.Database.FavoriteDao
+import com.dcc.eventticketapp.data.preferences.AppPreferencesDataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,7 +29,8 @@ object DatabaseModule {
             EventDatabase::class.java,
             "event_db"
         )
-            .addMigrations(MIGRATION_1_2)  // ← AJOUTER
+            .addMigrations(MIGRATION_1_2)
+            .fallbackToDestructiveMigration()
             .build()
     }
 
@@ -37,9 +40,22 @@ object DatabaseModule {
     ): EventDao {
         return database.eventDao()
     }
+
+    @Provides
+    fun provideFavoriteDao(
+        database: EventDatabase
+    ): FavoriteDao {
+        return database.favoriteDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppPreferencesDataStore(
+        @ApplicationContext context: Context
+    ): AppPreferencesDataStore = AppPreferencesDataStore(context)
 }
 
-// AJOUTER MIGRATION :
+// Migration de la version 1 à 2 (ajout des champs organisateur)
 val MIGRATION_1_2 = object : Migration(1, 2) {
     override fun migrate(database: SupportSQLiteDatabase) {
         database.execSQL("ALTER TABLE event ADD COLUMN organizerId TEXT NOT NULL DEFAULT ''")

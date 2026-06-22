@@ -10,11 +10,6 @@ plugins {
 android {
     namespace = "com.dcc.eventticketapp"
     compileSdk = 36
-    /*compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }*/
 
     defaultConfig {
         applicationId = "com.dcc.eventticketapp"
@@ -64,55 +59,46 @@ dependencies {
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 
-    //ici
+    // Compose
     implementation("androidx.compose.material:material-icons-extended")
     implementation("androidx.navigation:navigation-compose:2.7.7")
-    // Coil pour les images
-    implementation("io.coil-kt:coil-compose:2.7.0")
-    // Icons étendus
     implementation("androidx.compose.material:material-icons-extended:1.7.5")
-    // ViewModel Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.4")
     implementation("androidx.lifecycle:lifecycle-runtime-compose:2.8.4")
-    //Hilt
+
+    // Coil pour les images
+    implementation("io.coil-kt:coil-compose:2.7.0")
+
+    // Hilt
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     implementation("com.google.dagger:hilt-android:2.56.1")
     ksp("com.google.dagger:hilt-compiler:2.56.1")
-    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // Retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-
-    // OkHttp logging
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
-
-    // Gson
     implementation("com.google.code.gson:gson:2.10.1")
 
-
-    //Room
+    // Room
     val roomVersion = "2.6.1"
     implementation("androidx.room:room-runtime:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
     ksp("androidx.room:room-compiler:$roomVersion")
 
-    //Firebase
+    // Firebase
     implementation(platform("com.google.firebase:firebase-bom:34.0.0"))
-
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.8.1")
 
-    //la dépendance QR code
+    // QR Code
     implementation("com.google.zxing:core:3.5.2")
-
 
     // Google Sign-In
     implementation("com.google.android.gms:play-services-auth:21.3.0")
-
-    // Credential Manager (nouvelle API recommandée Android)
     implementation("androidx.credentials:credentials:1.3.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
@@ -126,7 +112,6 @@ dependencies {
     // Stripe
     implementation("com.stripe:stripe-android:21.2.0")
 
-
-    implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
-
+    // AppCompat
+    implementation("androidx.appcompat:appcompat:1.7.0")
 }

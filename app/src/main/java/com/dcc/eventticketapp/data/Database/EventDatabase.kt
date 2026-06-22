@@ -5,14 +5,16 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.dcc.eventticketapp.data.Entities.EventModel
+import com.dcc.eventticketapp.data.Entities.FavoriteEntity
 
 @Database(
-    entities = [EventModel::class],
+    entities = [EventModel::class, FavoriteEntity::class],
     version = 2
 )
 abstract class EventDatabase : RoomDatabase() {
 
     abstract fun eventDao(): EventDao
+    abstract fun favoriteDao(): FavoriteDao
 
     companion object {
 
@@ -27,7 +29,7 @@ abstract class EventDatabase : RoomDatabase() {
                     EventDatabase::class.java,
                     "event_db"
                 )
-                    //.allowMainThreadQueries()
+                    .fallbackToDestructiveMigration()
                     .build()
             }
 
