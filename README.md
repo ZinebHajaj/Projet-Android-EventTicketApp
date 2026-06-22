@@ -1,5 +1,3 @@
-<img width="1878" height="757" alt="image" src="https://github.com/user-attachments/assets/c0a7603c-007e-47c5-8ae3-bef6f8bb8ab0" />
-
 ---
 
 ```markdown
