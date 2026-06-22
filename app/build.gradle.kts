@@ -120,4 +120,10 @@ dependencies {
     // Facebook SDK
     implementation("com.facebook.android:facebook-android-sdk:latest.release")
 
+    // DataStore
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    // Stripe
+    implementation("com.stripe:stripe-android:21.2.0")
+
 }

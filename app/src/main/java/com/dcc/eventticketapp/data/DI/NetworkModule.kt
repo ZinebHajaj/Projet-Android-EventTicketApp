@@ -1,6 +1,8 @@
 package com.dcc.eventticketapp.data.DI
 
 import com.dcc.eventticketapp.data.Api.EventApi
+import com.dcc.eventticketapp.data.Repository.PayPalRepository
+import com.dcc.eventticketapp.data.Repository.StripeRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,4 +44,17 @@ object NetworkModule {
     @Singleton
     fun provideEventApi(retrofit: Retrofit): EventApi =
         retrofit.create(EventApi::class.java)
+
+    @Provides
+    @Singleton
+    fun provideStripeRepository(): StripeRepository {
+        return StripeRepository()
+    }
+
+    @Provides
+    @Singleton
+    fun providePayPalRepository(): PayPalRepository {
+        return PayPalRepository()
+    }
+
 }

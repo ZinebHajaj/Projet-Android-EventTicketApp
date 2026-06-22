@@ -2,6 +2,7 @@ package com.dcc.eventticketapp.ui.ticket
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.dcc.eventticketapp.data.Repository.AuthRepository
 import com.dcc.eventticketapp.data.Repository.TicketRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +12,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TicketViewModel @Inject constructor(
-    private val repository: TicketRepository
+    private val repository: TicketRepository,
+    private val authRepository : AuthRepository
 ) : ViewModel() {
 
     private val _state = MutableStateFlow(TicketViewState())
@@ -35,7 +37,10 @@ class TicketViewModel @Inject constructor(
     private suspend fun loadTickets() {
         _state.value = _state.value.copy(isLoading = true, error = null)
         try {
-            val tickets = repository.getTickets()
+            val userId = authRepository.currentUserId()
+                ?: throw Exception("Utilisateur non connecté")
+
+            val tickets = repository.getTickets(userId)
             _state.value = TicketViewState(isLoading = false, tickets = tickets)
         } catch (e: Exception) {
             _state.value = TicketViewState(
