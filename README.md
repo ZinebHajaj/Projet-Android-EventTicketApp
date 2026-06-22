@@ -1,4 +1,3 @@
-```markdown
 # Projet-Android-EventTicketApp
 
 ## 👥 Membres de l'équipe
