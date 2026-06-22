@@ -29,6 +29,10 @@ data class EventModel(
     @SerializedName("category")
     val category: String = "Concerts",
 
+    val organizerId: String = "",      // ID de l'organisateur
+    val createdAt: Long = 0,            // Timestamp création
+    val updatedAt: Long = 0,            // Timestamp modification
+
     val isFavorite: Boolean = false
 ){
     // Détermine si cet événement nécessite une sélection de sièges

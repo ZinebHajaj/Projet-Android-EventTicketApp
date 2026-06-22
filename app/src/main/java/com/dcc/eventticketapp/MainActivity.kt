@@ -2,6 +2,7 @@ package com.dcc.eventticketapp
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -127,12 +128,41 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun initializeOrganizerAccount() {
+        val auth = com.google.firebase.auth.FirebaseAuth.getInstance()
+        val email = "organisateur@ticketgo.com"
+        val password = "Organisateur123!"  // Mot de passe fort
+
+        auth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener {
+                val userId = it.user?.uid ?: return@addOnSuccessListener
+
+                // Créer le profil dans Firestore
+                val organizer = hashMapOf(
+                    "userId" to userId,
+                    "fullName" to "Organisateur TicketGo",
+                    "email" to email,
+                    "phone" to "",
+                    "role" to "organisateur"
+                )
+
+                com.google.firebase.firestore.FirebaseFirestore.getInstance()
+                    .collection("users")
+                    .document(userId)
+                    .set(organizer)
+            }
+            .addOnFailureListener {
+                // L'utilisateur existe déjà, c'est normal
+                Log.d("INIT", "Organisateur existe déjà")
+            }
+    }
 
     // Corps
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         initializeEventCounters()
+        //initializeOrganizerAccount()
 
         enableEdgeToEdge()
         setContent {

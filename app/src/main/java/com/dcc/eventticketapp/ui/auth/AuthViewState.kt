@@ -26,5 +26,8 @@ data class AuthViewState(
     // Erreurs validation
     val emailError         : Boolean = false,
     val phoneError         : Boolean = false,
-    val passwordMatchError : Boolean = false
+    val passwordMatchError : Boolean = false,
+
+    //Role
+    val userRole: String = "user"
 )

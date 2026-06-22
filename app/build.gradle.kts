@@ -126,4 +126,7 @@ dependencies {
     // Stripe
     implementation("com.stripe:stripe-android:21.2.0")
 
+
+    implementation("com.google.firebase:firebase-storage-ktx:20.3.0")
+
 }

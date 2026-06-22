@@ -8,7 +8,7 @@ import com.dcc.eventticketapp.data.Entities.EventModel
 
 @Database(
     entities = [EventModel::class],
-    version = 1
+    version = 2
 )
 abstract class EventDatabase : RoomDatabase() {
 

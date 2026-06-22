@@ -34,4 +34,6 @@ sealed class AuthIntent {
     // SSO Facebook
     data class FacebookSignInResult(val accessToken: AccessToken) : AuthIntent()
     object FacebookSignInError : AuthIntent()
+
+    object ResetSuccess : AuthIntent()
 }

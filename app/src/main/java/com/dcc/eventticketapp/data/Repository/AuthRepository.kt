@@ -192,4 +192,23 @@ class AuthRepository @Inject constructor(
             )
     }
 
+
+
+
+   //organisateur
+
+    suspend fun getCurrentUserRole(): String {
+        val uid = auth.currentUser?.uid ?: return "user"
+        return try {
+            val snapshot = firestore
+                .collection("users")
+                .document(uid)
+                .get()
+                .await()
+            snapshot.getString("role") ?: "user"
+        } catch (e: Exception) {
+            "user"
+        }
+    }
+
 }

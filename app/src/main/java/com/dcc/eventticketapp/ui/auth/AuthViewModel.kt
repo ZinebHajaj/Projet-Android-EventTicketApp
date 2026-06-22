@@ -124,6 +124,10 @@ class AuthViewModel @Inject constructor(
                 )
             }
 
+            is AuthIntent.ResetSuccess -> {
+                _state.value = _state.value.copy(isSuccess = false)
+            }
+
         }
     }
 
@@ -134,11 +138,15 @@ class AuthViewModel @Inject constructor(
                 email    = _state.value.loginEmail,
                 password = _state.value.loginPassword
             )
+
+            val role = repository.getCurrentUserRole()
+
             _state.value = _state.value.copy(
                 isLoading       = false,
                 isSuccess       = true,
                 isAuthenticated = true,
-                user            = user
+                user            = user,
+                userRole = role
             )
         } catch (e: Exception) {
             _state.value = _state.value.copy(
@@ -174,12 +182,13 @@ class AuthViewModel @Inject constructor(
     private suspend fun checkSession() {
 
         val user = repository.getCurrentUser()
+        val role = repository.getCurrentUserRole()
 
         if (user != null) {
-
             _state.value = _state.value.copy(
                 user = user,
-                isAuthenticated = true
+                isAuthenticated = true,
+                userRole = role
             )
         }
     }

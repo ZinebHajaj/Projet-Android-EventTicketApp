@@ -67,13 +67,14 @@ fun LoginScreen(
     val state by viewModel.state.collectAsState()
     var passwordVisible by remember { mutableStateOf(false) }
 
+    /*
     LaunchedEffect(state.isSuccess) {
         if (state.isSuccess) {
             viewModel.handleIntent(AuthIntent.ResetState)
             onLoginSuccess()
         }
     }
-
+*/
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = Color.Transparent

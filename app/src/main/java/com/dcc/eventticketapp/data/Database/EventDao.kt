@@ -20,4 +20,10 @@ interface EventDao {
 
     @Query("SELECT * FROM event WHERE id = :eventId")
     suspend fun getEventById(eventId: String): EventModel?
+
+    @Query("SELECT * FROM event WHERE organizerId = :organizerId ORDER BY createdAt DESC")
+    suspend fun getMyEvents(organizerId: String): List<EventModel>
+
+    @Query("DELETE FROM event WHERE id = :eventId")
+    suspend fun deleteById(eventId: String)
 }

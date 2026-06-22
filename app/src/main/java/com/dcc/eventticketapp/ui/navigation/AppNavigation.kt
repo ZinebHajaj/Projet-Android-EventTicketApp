@@ -1,6 +1,7 @@
 package com.dcc.eventticketapp.ui.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -10,6 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.dcc.eventticketapp.ui.auth.AuthIntent
 import com.dcc.eventticketapp.ui.auth.AuthViewModel
 import com.dcc.eventticketapp.ui.auth.screens.LoginScreen
 import com.dcc.eventticketapp.ui.auth.screens.RegisterScreen
@@ -29,6 +31,11 @@ import com.dcc.eventticketapp.ui.events.EventsViewModel
 import com.dcc.eventticketapp.ui.events.screens.EventsScreen
 import com.dcc.eventticketapp.ui.favorites.FavoritesViewModel
 import com.dcc.eventticketapp.ui.favorites.screens.FavoritesScreen
+import com.dcc.eventticketapp.ui.organizer.OrganizerViewModel
+import com.dcc.eventticketapp.ui.organizer.screens.CreateEventScreen
+import com.dcc.eventticketapp.ui.organizer.screens.EditEventScreen
+import com.dcc.eventticketapp.ui.organizer.screens.MyEventsScreen
+import com.dcc.eventticketapp.ui.organizer.screens.OrganizerHomeScreen
 import com.dcc.eventticketapp.ui.ticket.TicketViewModel
 import com.dcc.eventticketapp.ui.ticket.screens.TicketScreen
 
@@ -51,8 +58,16 @@ fun AppNavigation(
 
         // 1- Splash -> Home
         composable("splash") {
+            val authState by authViewModel.state.collectAsState()
+
+            LaunchedEffect(Unit) {
+                authViewModel.handleIntent(AuthIntent.CheckSession)
+            }
+
             SplashScreen(
                 onSplashFinished = {
+                    // TOUJOURS aller vers home après splash
+                    // L'organisateur se connectera via login s'il veut
                     navController.navigate("home") {
                         popUpTo("splash") { inclusive = true }
                     }
@@ -118,11 +133,51 @@ fun AppNavigation(
 
         // 6- Login
         composable("login") {
+            val authState by authViewModel.state.collectAsState()
+
             LoginScreen(
                 viewModel = authViewModel,
                 onLoginSuccess = {
-                    navController.navigate("home") {
-                        popUpTo("login") { inclusive = true }
+                    // Laisser LaunchedEffect ci-dessous gérer la navigation
+                },
+                onGoogleSignInClick = onGoogleSignIn,
+                onFacebookSignInClick = onFacebookSignIn,
+                onNavigateToRegister = { navController.navigate("register") }
+            )
+
+            // Redirection selon le rôle
+            LaunchedEffect(authState.isSuccess, authState.userRole) {
+                if (authState.isSuccess && authState.userRole.isNotBlank()) {
+                    if (authState.userRole == "organisateur") {
+                        navController.navigate("organizerHome") {
+                            popUpTo("login") { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate("home") {
+                            popUpTo("login") { inclusive = true }
+                        }
+                    }
+                    // Réinitialiser APRÈS la navigation
+                    authViewModel.handleIntent(AuthIntent.ResetSuccess)
+                }
+            }
+        }
+
+        /*
+        composable("login") {
+            LoginScreen(
+                viewModel = authViewModel,
+                onLoginSuccess = {
+                    // Vérifier le rôle après connexion
+                    val role = authViewModel.state.value.userRole
+                    if (role == "organisateur") {
+                        navController.navigate("organizerHome") {
+                            popUpTo("login") { inclusive = true }
+                        }
+                    } else {
+                        navController.navigate("home") {
+                            popUpTo("login") { inclusive = true }
+                        }
                     }
                 },
                 onGoogleSignInClick = onGoogleSignIn,
@@ -130,7 +185,7 @@ fun AppNavigation(
                 onNavigateToRegister = { navController.navigate("register") }
             )
         }
-
+        */
 
         // 7- Register
         composable("register") {
@@ -253,6 +308,77 @@ fun AppNavigation(
                 }
             )
         }
+
+
+        // 11- les routes organisateur :
+        composable("organizerHome") {
+            val organizerViewModel: OrganizerViewModel = hiltViewModel()
+
+            OrganizerHomeScreen(
+                onCreateEvent = { navController.navigate("createEvent") },
+                onMyEvents = { navController.navigate("myEvents") },
+                onLogout = {
+                    authViewModel.handleIntent(AuthIntent.Logout)
+                    navController.navigate("login") {
+                        popUpTo("organizerHome") { inclusive = true }
+                    }
+                }
+            )
+        }
+
+        // NOUVEAU : CreateEvent
+        composable("createEvent") {
+            val parentEntry = remember(it) {
+                navController.getBackStackEntry("organizerHome")
+            }
+            val organizerViewModel: OrganizerViewModel = hiltViewModel(parentEntry)
+
+            CreateEventScreen(
+                onBack = { navController.popBackStack() },
+                viewModel = organizerViewModel
+            )
+        }
+
+        // NOUVEAU : MyEvents
+        composable("myEvents") {
+            val parentEntry = remember(it) {
+                navController.getBackStackEntry("organizerHome")
+            }
+            val organizerViewModel: OrganizerViewModel = hiltViewModel(parentEntry)
+
+            MyEventsScreen(
+                onBack = { navController.popBackStack() },
+                onEditEvent = { event ->
+                    organizerViewModel.handleIntent(
+                        com.dcc.eventticketapp.ui.organizer.OrganizerIntent.SelectEvent(event)
+                    )
+                    navController.navigate("editEvent")
+                },
+                viewModel = organizerViewModel
+            )
+        }
+
+        // NOUVEAU : EditEvent
+        composable("editEvent") {
+            val parentEntry = remember(it) {
+                navController.getBackStackEntry("organizerHome")
+            }
+            val organizerViewModel: OrganizerViewModel = hiltViewModel(parentEntry)
+            val state by organizerViewModel.state.collectAsState()
+
+            state.selectedEvent?.let { event ->
+                EditEventScreen(
+                    event = event,
+                    onBack = { navController.popBackStack() },
+                    viewModel = organizerViewModel
+                )
+            } ?: run {
+                LaunchedEffect(Unit) {
+                    navController.popBackStack()
+                }
+            }
+        }
+
     }
 
 }
