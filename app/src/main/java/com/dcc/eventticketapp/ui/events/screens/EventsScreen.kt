@@ -145,9 +145,7 @@ fun EventsScreen(
                         textSecond      = textSecond,
                         onClick         = { onEventClick(event.id) },
                         onFavoriteClick = {
-                            viewModel.handleIntent(
-                                EventsIntent.ToggleFavorite(event.id)
-                            )
+                            viewModel.handleIntent(EventsIntent.ToggleFavorite(event.id))
                         }
                     )
                 }

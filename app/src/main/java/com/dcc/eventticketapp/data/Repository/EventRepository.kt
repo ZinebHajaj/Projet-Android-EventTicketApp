@@ -22,19 +22,55 @@ class EventRepository @Inject constructor(
     private val storage: FirebaseStorage
 ) {
 
+    // ========== LECTURE UNIQUEMENT DEPUIS FIRESTORE ==========
+
     suspend fun getEvents(): List<EventModel> {
-        try {
-            val events = api.getEvents()
-            Log.d("EventRepository", "Network size = ${events.size}")
+        return try {
+            // 1. VIDER Room pour éviter les vieux événements
+            eventDao.deleteAll()
+
+            // 2. Lire depuis Firestore
+            val snapshot = firestore
+                .collection("events")
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .get()
+                .await()
+
+            val events = snapshot.documents.mapNotNull { doc ->
+                doc.toObject(EventModel::class.java)
+            }
+
+            Log.d("EventRepository", "Firestore events: ${events.size}")
+
+            // 3. Mettre en cache dans Room
             eventDao.insertAll(events)
+
+            events
         } catch (e: Exception) {
-            Log.e("EventRepository", "Using cache", e)
+            Log.e("EventRepository", "Firestore failed: ${e.message}")
+            eventDao.getAll()
         }
-        return eventDao.getAll()
     }
 
     suspend fun getEventById(eventId: String): EventModel? {
-        return eventDao.getEventById(eventId)
+        // 1. Essayer Room d'abord
+        val cached = eventDao.getEventById(eventId)
+        if (cached != null) return cached
+
+        // 2. Essayer Firestore
+        return try {
+            val doc = firestore
+                .collection("events")
+                .document(eventId)
+                .get()
+                .await()
+
+            doc.toObject(EventModel::class.java)?.also {
+                eventDao.insert(it)  // Mettre en cache
+            }
+        } catch (e: Exception) {
+            null
+        }
     }
 
     // ── Génère les 3 catégories de sièges à partir du prix de base ──
@@ -93,9 +129,10 @@ class EventRepository @Inject constructor(
             // 3. Initialiser les compteurs de places
             initializeSeatCounters(event.id, event.priceStandard)
 
+            Log.d("EventRepository", "Event created: ${event.id}")
             true
         } catch (e: Exception) {
-            Log.e("EventRepository", "Create event failed", e)
+            Log.e("EventRepository", "Create event failed: ${e.message}", e)
             false
         }
     }
@@ -118,14 +155,31 @@ class EventRepository @Inject constructor(
 
     suspend fun deleteEvent(eventId: String): Boolean {
         return try {
+            // 1. Supprimer les sous-collections
+            val tiersSnapshot = firestore
+                .collection("events")
+                .document(eventId)
+                .collection("seatTiers")
+                .get()
+                .await()
+
+            for (tier in tiersSnapshot.documents) {
+                tier.reference.delete().await()
+            }
+
+            // 2. Supprimer le document principal
             firestore.collection("events")
                 .document(eventId)
                 .delete()
                 .await()
 
+            // 3. Supprimer de Room
             eventDao.deleteById(eventId)
+
+            Log.d("EventRepository", "Event deleted: $eventId")
             true
         } catch (e: Exception) {
+            Log.e("EventRepository", "Delete failed: ${e.message}")
             false
         }
     }
@@ -143,7 +197,6 @@ class EventRepository @Inject constructor(
                 it.toObject(EventModel::class.java)
             }
         } catch (e: Exception) {
-            // Fallback sur Room
             eventDao.getMyEvents(organizerId)
         }
     }
@@ -166,53 +219,9 @@ class EventRepository @Inject constructor(
         }
     }
 
-
-
     suspend fun uploadEventImage(uri: Uri, eventId: String): String {
         val imageRef = storage.reference.child("events/$eventId/${UUID.randomUUID()}.jpg")
         imageRef.putFile(uri).await()
         return imageRef.downloadUrl.await().toString()
     }
 }
-
-
-
-/*
-class EventRepository @Inject constructor(
-    private val api: EventApi,
-    private val eventDao: EventDao
-) {
-
-    suspend fun getEvents(): List<EventModel> {
-
-        try {
-
-            val events = api.getEvents()
-
-            Log.d(
-                "EventRepository",
-                "Network size = ${events.size}"
-            )
-
-            eventDao.insertAll(events)
-
-        } catch (e: Exception) {
-
-            Log.e(
-                "EventRepository",
-                "Using cache",
-                e
-            )
-        }
-
-        return eventDao.getAll()
-    }
-
-    suspend fun getEventById(
-        eventId: String
-    ): EventModel? {
-
-        return eventDao.getEventById(eventId)
-    }
-}
-*/

@@ -9,21 +9,24 @@ import com.dcc.eventticketapp.data.Entities.EventModel
 @Dao
 interface EventDao {
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(events: List<EventModel>)
+    @Query("SELECT * FROM event")
+    suspend fun getAll(): List<EventModel>
+
+    @Query("SELECT * FROM event WHERE id = :id")
+    suspend fun getEventById(id: String): EventModel?
+
+    @Query("SELECT * FROM event WHERE organizerId = :organizerId")
+    suspend fun getMyEvents(organizerId: String): List<EventModel>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(event: EventModel)
 
-    @Query("SELECT * FROM event")
-    suspend fun getAll(): List<EventModel>
-
-    @Query("SELECT * FROM event WHERE id = :eventId")
-    suspend fun getEventById(eventId: String): EventModel?
-
-    @Query("SELECT * FROM event WHERE organizerId = :organizerId ORDER BY createdAt DESC")
-    suspend fun getMyEvents(organizerId: String): List<EventModel>
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(events: List<EventModel>)
 
     @Query("DELETE FROM event WHERE id = :eventId")
     suspend fun deleteById(eventId: String)
+
+    @Query("DELETE FROM event")
+    suspend fun deleteAll()
 }

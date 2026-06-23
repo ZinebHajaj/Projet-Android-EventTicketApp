@@ -37,7 +37,9 @@ import com.dcc.eventticketapp.ui.theme.OverlayDark
 import com.dcc.eventticketapp.ui.theme.OverlayDarkLight
 
 @Composable
-fun HeroBanner() {
+fun HeroBanner(
+    onExploreClick: () -> Unit = {}
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -79,7 +81,7 @@ fun HeroBanner() {
             Surface(
                 shape    = RoundedCornerShape(30.dp),
                 color    = BannerButton,
-                modifier = Modifier.clickable { }
+                modifier = Modifier.clickable { onExploreClick() }
             ) {
                 Row(
                     modifier          = Modifier.padding(horizontal = 16.dp, vertical = 10.dp),

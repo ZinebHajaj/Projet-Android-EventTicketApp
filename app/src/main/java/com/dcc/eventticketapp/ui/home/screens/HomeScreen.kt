@@ -92,26 +92,9 @@ fun HomeScreen(
                         )
                     }
                 },
-                actions = {
-                    Box {
-                        IconButton(onClick = {}) {
-                            Icon(Icons.Outlined.Notifications, "Notifications", tint = textPrimary)
-                        }
-                        Box(
-                            modifier = Modifier
-                                .size(8.dp)
-                                .background(Color.Red, CircleShape)
-                                .align(Alignment.TopEnd)
-                                .offset(x = (-12).dp, y = 12.dp)
-                        )
-                    }
-                },
+
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = bgColor),
-                navigationIcon = {
-                    IconButton(onClick = {}) {
-                        Icon(Icons.Outlined.Menu, null, tint = textPrimary)
-                    }
-                }
+
             )
         },
         bottomBar = {
@@ -132,9 +115,9 @@ fun HomeScreen(
                 .padding(padding)
         ) {
             item { SearchBarHome(surfaceColor, textSecond) }
-            item { HeroBanner() }
+            item { HeroBanner(onExploreClick = onEventsClick) }
             item {
-                SectionHeader("Catégories", textPrimary, textSecond, {})
+                SectionHeader("Catégories", textPrimary, textSecond, showSeeAll = false, onSeeAll = {})
                 Spacer(modifier = Modifier.height(12.dp))
                 CategoriesRow(
                     surfaceColor     = surfaceColor,
@@ -152,7 +135,7 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(8.dp))
             }
             item {
-                SectionHeader("Événements populaires", textPrimary, textSecond, {})
+                SectionHeader("Événements populaires", textPrimary, textSecond, showSeeAll = true, onSeeAll = onEventsClick)
                 Spacer(modifier = Modifier.height(8.dp))
             }
 

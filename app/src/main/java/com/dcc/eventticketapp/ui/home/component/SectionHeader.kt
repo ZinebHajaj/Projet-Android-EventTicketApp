@@ -1,4 +1,5 @@
 package com.dcc.eventticketapp.ui.home.component
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,12 +17,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.dcc.eventticketapp.ui.theme.OrangeMain
 
 @Composable
 fun SectionHeader(
     title       : String,
     textPrimary : Color,
     textSecond  : Color,
+    showSeeAll: Boolean = true,
     onSeeAll    : () -> Unit
 ) {
     Row(
@@ -33,10 +36,25 @@ fun SectionHeader(
     ) {
         Text(title, fontSize = 18.sp,
             fontWeight = FontWeight.Bold, color = textPrimary)
-        TextButton(onClick = onSeeAll) {
-            Text("Voir tout", color = textSecond, fontSize = 13.sp)
-            Icon(Icons.Outlined.ChevronRight, null,
-                tint = textSecond, modifier = Modifier.size(16.dp))
+
+        if (showSeeAll) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.clickable { onSeeAll() }
+            ) {
+                Text(
+                    text = "Voir tout",
+                    fontSize = 13.sp,
+                    color = OrangeMain,
+                    fontWeight = FontWeight.Medium
+                )
+                Icon(
+                    Icons.Outlined.ChevronRight,
+                    contentDescription = null,
+                    tint = OrangeMain,
+                    modifier = Modifier.size(16.dp)
+                )
+            }
         }
     }
 }

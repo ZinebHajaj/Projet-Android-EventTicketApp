@@ -24,12 +24,11 @@ class FavoritesRepository @Inject constructor(
     /**
      * Récupère les events favoris complets (synchronise Firestore -> Room, puis lit Room).
      */
+    // Dans FavoritesRepository.kt - MODIFIER getFavorites() :
     suspend fun getFavorites(): List<EventModel> {
-
         val userId = currentUserId()
 
         try {
-
             val snapshot = firestore
                 .collection("users")
                 .document(userId)
@@ -41,7 +40,7 @@ class FavoritesRepository @Inject constructor(
 
             Log.d("FavoritesRepository", "Remote favorites = ${remoteIds.size}")
 
-            favoriteDao.clearAll(userId)
+            // Insérer seulement les nouveaux (ou remplacer)
             favoriteDao.insertAll(
                 remoteIds.map { eventId ->
                     FavoriteEntity(userId = userId, eventId = eventId)
@@ -54,14 +53,12 @@ class FavoritesRepository @Inject constructor(
 
         val favoriteIds = favoriteDao.getFavoriteEventIds(userId)
 
-        // On récupère les events complets depuis le repository déjà existant (Room events)
         return favoriteIds.mapNotNull { eventId ->
             eventRepository.getEventById(eventId)
         }
     }
 
     suspend fun addFavorite(eventId: String) {
-
         val userId = currentUserId()
 
         firestore
@@ -73,10 +70,10 @@ class FavoritesRepository @Inject constructor(
             .await()
 
         favoriteDao.insert(FavoriteEntity(userId = userId, eventId = eventId))
+        Log.d("FavoritesRepository", "Added favorite: $eventId")
     }
 
     suspend fun removeFavorite(eventId: String) {
-
         val userId = currentUserId()
 
         firestore
@@ -88,6 +85,21 @@ class FavoritesRepository @Inject constructor(
             .await()
 
         favoriteDao.delete(userId, eventId)
+        Log.d("FavoritesRepository", "Removed favorite: $eventId")
+    }
+
+    // NOUVEAU : Toggle (ajouter si pas favori, supprimer si favori)
+    suspend fun toggleFavorite(eventId: String): Boolean {
+        val userId = currentUserId()
+        val isCurrentlyFavorite = favoriteDao.isFavorite(userId, eventId)
+
+        return if (isCurrentlyFavorite) {
+            removeFavorite(eventId)
+            false // N'est plus favori
+        } else {
+            addFavorite(eventId)
+            true // Est maintenant favori
+        }
     }
 
     suspend fun isFavorite(eventId: String): Boolean {
@@ -96,7 +108,6 @@ class FavoritesRepository @Inject constructor(
     }
 
     suspend fun clearAllFavorites() {
-
         val userId = currentUserId()
 
         val snapshot = firestore
@@ -112,6 +123,7 @@ class FavoritesRepository @Inject constructor(
 
         favoriteDao.clearAll(userId)
     }
+
     suspend fun getFavoriteIds(): Set<String> {
         val userId = currentUserId()
         return favoriteDao.getFavoriteEventIds(userId).toSet()

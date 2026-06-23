@@ -30,24 +30,24 @@ import com.dcc.eventticketapp.ui.theme.OrangeMain
 
 @Composable
 fun EventDetailHeader(
-    imageUrl   : String,
-    title      : String,
-    category   : String,
-    isFavorite : Boolean,
-    onBack     : () -> Unit,
-    onFavorite : () -> Unit
+    imageUrl: String,
+    title: String,
+    category: String,
+    isFavorite: Boolean,
+    onBack: () -> Unit,
+    onFavorite: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(380.dp)  // ← grande image
+            .height(380.dp)
     ) {
         // Image plein écran
         AsyncImage(
-            model              = imageUrl,
+            model = imageUrl,
             contentDescription = null,
-            modifier           = Modifier.fillMaxSize(),
-            contentScale       = ContentScale.Crop
+            modifier = Modifier.fillMaxSize(),
+            contentScale = ContentScale.Crop
         )
 
         // Overlay dégradé du bas
@@ -68,7 +68,7 @@ fun EventDetailHeader(
         // Bouton retour en haut à gauche
         Surface(
             modifier = Modifier
-                .padding(top = 48.dp, start = 16.dp)  // ← padding top pour barre statut
+                .padding(top = 48.dp, start = 16.dp)
                 .size(42.dp)
                 .align(Alignment.TopStart),
             shape = CircleShape,
@@ -78,28 +78,31 @@ fun EventDetailHeader(
                 Icon(
                     Icons.Outlined.ArrowBack,
                     contentDescription = "Retour",
-                    tint               = Color.Black
+                    tint = Color.Black
                 )
             }
         }
 
-        // Bouton favori en haut à droite
         Surface(
             modifier = Modifier
                 .padding(top = 48.dp, end = 16.dp)
-                .size(42.dp)
+                .size(48.dp) // ← Plus grand
                 .align(Alignment.TopEnd),
             shape = CircleShape,
             color = Color.White.copy(alpha = 0.85f)
         ) {
-            IconButton(onClick = onFavorite) {
+            IconButton(
+                onClick = onFavorite,
+                modifier = Modifier.fillMaxSize()
+            ) {
                 Icon(
                     imageVector = if (isFavorite)
                         Icons.Filled.Favorite
                     else
                         Icons.Outlined.FavoriteBorder,
                     contentDescription = "Favori",
-                    tint               = if (isFavorite) OrangeMain else Color.Gray
+                    tint = if (isFavorite) OrangeMain else Color.Gray,
+                    modifier = Modifier.size(24.dp) // ← Plus grande
                 )
             }
         }
@@ -116,8 +119,8 @@ fun EventDetailHeader(
                 color = OrangeMain
             ) {
                 Text(
-                    text     = category,
-                    color    = Color.White,
+                    text = category,
+                    color = Color.White,
                     fontSize = 12.sp,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)
@@ -130,10 +133,10 @@ fun EventDetailHeader(
 
             // Titre sur l'image
             Text(
-                text       = title,
-                fontSize   = 26.sp,
+                text = title,
+                fontSize = 26.sp,
                 fontWeight = FontWeight.Bold,
-                color      = Color.White,
+                color = Color.White,
                 lineHeight = 32.sp
             )
         }

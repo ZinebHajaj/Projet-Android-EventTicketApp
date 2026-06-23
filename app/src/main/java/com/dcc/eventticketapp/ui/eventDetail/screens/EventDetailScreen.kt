@@ -26,15 +26,21 @@ import com.dcc.eventticketapp.ui.eventDetail.component.EventDetailInfo
 import com.dcc.eventticketapp.ui.theme.ErrorLight
 import com.dcc.eventticketapp.ui.theme.OrangeMain
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.dcc.eventticketapp.ui.favorites.FavoritesIntent
+import com.dcc.eventticketapp.ui.favorites.FavoritesViewModel
 
 @Composable
 fun EventDetailScreen(
     eventId   : String,
     onBack    : () -> Unit,
     onNavigateToBooking : (String) -> Unit,
-    viewModel : EventDetailViewModel = hiltViewModel()
+    viewModel : EventDetailViewModel = hiltViewModel(),
+    favoritesViewModel: FavoritesViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
+
+    val favoritesState by favoritesViewModel.state.collectAsState()
+    val isFavorite = favoritesState.allFavorites.any { it.id == eventId }
 
     LaunchedEffect(eventId) {
         viewModel.handleIntent(EventDetailIntent.LoadEvent(eventId))
@@ -72,10 +78,13 @@ fun EventDetailScreen(
                             imageUrl   = state.event!!.imageUrl,
                             title      = state.event!!.title,
                             category   = state.event!!.category,
-                            isFavorite = state.event!!.isFavorite,
+                            isFavorite = isFavorite,
+                            //isFavorite = state.event!!.isFavorite,
                             onBack     = onBack,
                             onFavorite = {
-                                viewModel.handleIntent(EventDetailIntent.ToggleFavorite)
+                                favoritesViewModel.handleIntent(
+                                    FavoritesIntent.ToggleFavorite(eventId)
+                                )
                             }
                         )
                     }
