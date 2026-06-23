@@ -259,6 +259,12 @@ dependencies {
 ### Liste des événements
 <img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/28304387-863d-458f-b935-7691e3cd895a" />
 
+### Écran de Profile
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/96d0291e-85db-47aa-b7a7-51e8de65ddf2" />
+
+### Écran de Favoris
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/8a239858-8b30-424c-89df-2b9a766dfd75" />
+
 ---
 
 ## 🎯 Points forts du projet
