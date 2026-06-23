@@ -226,34 +226,38 @@ dependencies {
 ## 📸 Captures d'écran
 
 ### Écran de connexion
-![Login Screen](screenshots/login.png)
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/1fc524c3-b0c6-46ff-9a39-ee83174fef60" />
 
 ### Écran d'accueil
-![Home Screen](screenshots/home.png)
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/51f04ce2-553b-41be-a666-35267b7deb09" />
 
 ### Détail d'événement
-![Event Detail](screenshots/event_detail.png)
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/eb55e19b-8272-4955-9809-0a7ef7ccfaab" />
 
 ### Réservation de sièges
-![Booking Screen](screenshots/booking.png)
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/e8652ff9-fc60-4fd1-89a6-b2e097d9a595" />
 
-### Paiement Stripe
-![Payment Screen](screenshots/payment.png)
+
+### Paiement Stripe/Paypal
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/442f94f9-c6d8-495a-8f6e-79c27600f8af" />
 
 ### Confirmation
-![Confirmation Screen](screenshots/confirmation.png)
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/9f95d339-4563-4ba1-a0aa-0bcfac31779f" />
 
 ### QR Code Billet
-![Ticket QR](screenshots/ticket_qr.png)
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/5211c670-2d97-4e89-971c-c2c8ce99fd20" />
+
 
 ### Espace Organisateur
-![Organizer Home](screenshots/organizer_home.png)
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/1c39315f-c5bd-4d57-bdad-2425de7086a3" />
+
 
 ### Création d'événement
-![Create Event](screenshots/create_event.png)
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/474be38f-0a38-47da-9200-de251ee398f1" />
+
 
 ### Liste des événements
-![My Events](screenshots/my_events.png)
+<img width="720" height="1600" alt="image" src="https://github.com/user-attachments/assets/28304387-863d-458f-b935-7691e3cd895a" />
 
 ---
 
